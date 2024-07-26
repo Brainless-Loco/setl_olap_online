@@ -13,7 +13,6 @@ export async function POST (request=Request) {
             GRAPH ?g {?s ?p ?o}
         }
     `
-
     const result = await client.query(sparql)
     const data = result.data.results
     const graphs = data.bindings

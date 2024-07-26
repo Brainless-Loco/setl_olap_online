@@ -1,5 +1,5 @@
 import axios from "axios"
-// const { default: getIPV4 } = require("./LocalIP")
+const { default: getIPV4 } = require("./LocalIP")
 
 module.exports = class SparqlClient {
     constructor(endpoint, user, password) {

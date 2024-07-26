@@ -4,3 +4,5 @@
 export const INCREMENT = 'INCREMENT';
 export const UPDATE_TBOX = 'UPDATE_TBOX';
 export const UPDATE_ABOX  = 'UPDATE_ABOX';
+export const UPDATE_DATASET = 'UPDATE_DATASET';
+export const UPDATE_DATASET_LIST = 'UPDATE_DATASET_LIST';

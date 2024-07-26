@@ -1,12 +1,14 @@
-import { INCREMENT, UPDATE_ABOX, UPDATE_TBOX } from "./type";
+import { INCREMENT, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_TBOX } from "./type";
 
 
 const datasetInitialState = {
     tbox:'',
     abox: '',
-    datasetList:'',
     treeStructure:'',
-    value:0
+    dataset:'',
+    value:0,
+    datasetList:[]
+
 }
 
 const datasetReducer = (state = datasetInitialState, action) => {
@@ -24,6 +26,16 @@ const datasetReducer = (state = datasetInitialState, action) => {
             return{
                 ...state,
                 abox:action.abox
+            }
+        case UPDATE_DATASET:
+            return{
+                ...state,
+                dataset: action.dataset
+            }
+        case UPDATE_DATASET_LIST:
+            return{
+                ...state,
+                datasetList: action.datasetList
             }
         default:
             return state;

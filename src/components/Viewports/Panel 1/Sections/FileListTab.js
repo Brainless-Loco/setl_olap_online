@@ -6,7 +6,8 @@ import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { increment, update_ABox, update_TBox } from "@/lib/redux/action"
+import { update_ABox, update_dataset_list, update_TBox } from "@/lib/redux/action"
+import { Typography } from "@mui/material"
 
 const FileListTab = ({}) => {
 
@@ -27,18 +28,30 @@ const FileListTab = ({}) => {
         else{
             console.log("couldn't fetch the graphs...")
         }
-        
+    }
+
+    const getDatasetList = async()=>{
+        const res = await fetch('/api/get_dataset_list', {
+            method: "POST",
+            body:JSON.stringify({tbox:tbox})}
+        )
+        if(res){
+            const data = await res.json()
+            console.log(data.datasetList)
+            dispatch(update_dataset_list(data.datasetList))
+        }
+        else{
+            console.log("couldn't fetch the dataset list...")
+        }
     }
 
     useEffect(() => {
         getGraphList();
     }, [])
 
-    console.log(tbox)
-
     return (
-        <Box sx={{width: 'auto',display:'flex',justifyContent:'center',flexDirection:'column',flexWrap:'wrap'}}>
-            <FormControl fullWidth sx={{ marginY: '10px'}}>
+        <Box sx={{width: 'auto',display:'flex',justifyContent:'center',flexDirection:'column',flexWrap:'wrap',gap:'5px'}}>
+            <FormControl fullWidth>
                 <InputLabel id='filter-cond-label' sx={{fontSize:'12px'}}>TBox IRI</InputLabel>
                 <Select
                     labelId="filter-cond-select"
@@ -67,9 +80,14 @@ const FileListTab = ({}) => {
                     ))}
                 </Select>
             </FormControl>
+            <Box hidden={tbox.length>0 && abox.length>0}>
+                <Typography sx={{color:'#08094f',fontSize:'12px',fontWeight:'bold',textAlign:'center'}}> 
+                    Select a TBox and an ABox to extract dataset(s).
+                </Typography>
+            </Box>
             
             <Button className="extractBtn" fullWidth variant='contained' 
-            onClick={() => dispatch(increment(5))} type="button" 
+            onClick={() => getDatasetList()} type="button" 
             disabled={!tbox.length || !abox.length} >
                 Extract Datasets
             </Button>
