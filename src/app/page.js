@@ -2,15 +2,17 @@
 
 import Viewport1 from "@/components/navbar/Viewports/Panel 1/Viewport1";
 import { useEffect, useState } from "react";
+import { Provider } from "react-redux";
+import store from '../lib/redux/store'
 
 export default function Home() {
 
-  const [aboxIRI, setABoxIRI] = useState('')
-  const [tboxIRI, setTBoxIRI] = useState('')
-
   return (
-    <main className="flex min-h-screen flex-col justify-between">
-      <Viewport1/>
-    </main>
+    
+    <Provider store={store}>
+      <main className="flex min-h-screen flex-col justify-between">
+        <Viewport1/>
+      </main>
+    </Provider>
   );
 }

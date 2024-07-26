@@ -5,22 +5,18 @@ import InputLabel from '@mui/material/InputLabel'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { increment, update_ABox, update_TBox } from "@/lib/redux/action"
 
-const FileListTab = ({ }) => {
+const FileListTab = ({}) => {
+
+    const dispatch = useDispatch();
+
+    const tbox = useSelector((state) => state.datasetReducer.tbox);
+    const abox = useSelector((state) => state.datasetReducer.abox);
+
     const [graphs, setGraphs] = useState([])
-
     
-    const [abox, setAbox] = useState('')
-    const [tbox, setTbox] = useState('')
-
-    const handleABoxChange = (e) => {
-        setAbox(e.target.value)
-    }
-
-    const handleTBoxChange = (e) => {
-        setTbox(e.target.value)
-    }
-
     const getGraphList = async () => {
         const res = await fetch('/api/get_graph_list', {method: "POST"})
         if(res){
@@ -38,8 +34,10 @@ const FileListTab = ({ }) => {
         getGraphList();
     }, [])
 
+    console.log(tbox)
+
     return (
-        <Box sx={{width: 'auto',display:'flex',justifyContent:'center',flexDirection:'column',flexWrap:'wrap',}}>
+        <Box sx={{width: 'auto',display:'flex',justifyContent:'center',flexDirection:'column',flexWrap:'wrap'}}>
             <FormControl fullWidth sx={{ marginY: '10px'}}>
                 <InputLabel id='filter-cond-label' sx={{fontSize:'12px'}}>TBox IRI</InputLabel>
                 <Select
@@ -47,7 +45,7 @@ const FileListTab = ({ }) => {
                     sx={{ height:'40px',}}
                     label='TBox IRI'
                     value={tbox}
-                    onChange={handleTBoxChange}
+                    onChange={(e)=>dispatch(update_TBox(e.target.value))}
                     defaultValue=''>
                     {graphs.map((item, idx) => (
                         <MenuItem key={`tbox_${idx}`} value={item}>{item}</MenuItem>
@@ -62,7 +60,7 @@ const FileListTab = ({ }) => {
                     sx={{height:'40px' }}
                     label='ABox IRI'
                     value={abox}
-                    onChange={handleABoxChange}
+                    onChange={(e)=>dispatch(update_ABox(e.target.value))}
                     defaultValue=''>
                     {graphs.map((item, idx) => (
                         <MenuItem key={`abox_${idx}`} value={item}>{item}</MenuItem>
@@ -70,10 +68,11 @@ const FileListTab = ({ }) => {
                 </Select>
             </FormControl>
             
-            {/* <Button className="extractBtn" fullWidth variant='contained' onClick={() => onExtractDataset(abox, tbox)} type="button" 
+            <Button className="extractBtn" fullWidth variant='contained' 
+            onClick={() => dispatch(increment(5))} type="button" 
             disabled={!tbox.length || !abox.length} >
                 Extract Datasets
-            </Button> */}
+            </Button>
         </Box>
     )
 }

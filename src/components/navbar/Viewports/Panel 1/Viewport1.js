@@ -7,7 +7,7 @@ import FileListTab from "./Sections/FileListTab"
 
 
 const Viewport1 = ({
-
+    setTBoxIRI, setABoxIRI
     }) => {
 
     
@@ -18,7 +18,7 @@ const Viewport1 = ({
                 <CardHeader title='Structure Extraction' sx={{color:'#08094f',marginBottom:'0px',paddingBottom:'0px',paddingTop:'5px'}}/>
                 <CardContent style={flexSetting}>
                     <Box sx={{ height: 'auto', overflowY: 'auto',width:'100%'}}>
-                        <FileListTab/>
+                        <FileListTab setTBoxIRI={setTBoxIRI} setABoxIRI={setABoxIRI}/>
                     </Box>
                     {/* <DatasetTab
                             onSelectDataset={onSelectDataset}
