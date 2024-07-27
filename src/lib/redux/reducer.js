@@ -1,10 +1,11 @@
-import { ADD_TO_PREFIX_LIST, INCREMENT, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
+import { ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
 
 
 const datasetInitialState = {
     tbox:'',
     abox: '',
     treeStructures:{},
+    measuresList:{},
     dataset:'',
     prefixes: {},
     datasetList:[],
@@ -49,6 +50,10 @@ const datasetReducer = (state = datasetInitialState, action) => {
                 ...state,
                 treeStructures: action.treeStructures
             }
+        case UPDATE_MEASURE_LIST:
+            return{
+                ...state,
+                measuresList: action.measuresList            }
         default:
             return state;
     }

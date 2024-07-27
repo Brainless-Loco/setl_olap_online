@@ -1,4 +1,4 @@
-import { ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
+import { ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
 
 export const update_TBox = (tbox)=> ({
     type: UPDATE_TBOX,
@@ -33,4 +33,9 @@ export const update_total_num_of_observations = (observations) =>({
 export const update_dimension_tree = (treeStructures)=>({
     type: UPDATE_DIMENSION_TREES,
     treeStructures: treeStructures
+})
+
+export const update_measure_list = (measuresList) => ({
+    type: UPDATE_MEASURE_LIST,
+    measuresList: measuresList
 })

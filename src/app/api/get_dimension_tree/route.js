@@ -46,8 +46,97 @@ prefix covProperty: <http://bike-csecu.com/datasets/covid/cdw/covProperty#>\n`
 
     // console.log(data)
 
-    return NextResponse.json({treeStructure:data });
+    return NextResponse.json({treeStructure:mergeResults(data) });
 }
 
+
+const mergeResults = (data) => {
+    const mergedData = {};
+
+    // Step 1: Merge data into a hierarchical structure
+    data.forEach(item => {
+        const dimensionUrl = item.dimension.value;
+        const hierarchyUrl = item.hierarchy.value;
+
+        if (!mergedData[dimensionUrl]) {
+        mergedData[dimensionUrl] = {
+            name: dimensionUrl,
+            hierarchies: {}
+        };
+        }
+
+        if (!mergedData[dimensionUrl].hierarchies[hierarchyUrl]) {
+            mergedData[dimensionUrl].hierarchies[hierarchyUrl] = {
+                name: hierarchyUrl,
+                levels: {}
+            };
+        }
+
+        mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[item.child.value] = {
+            name: item.child.value,
+            parentLevel: item.parent.value,
+            rollupRelation: item.rollupProperty.value
+        };
+
+        // Also add the parent level if not already added (to ensure all levels are present)
+        if (!mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[item.parent.value]) {
+        mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[item.parent.value] = {
+            name: item.parent.value,
+            parentLevel: null, // Parent level's parent is not known at this point
+            rollupRelation: null
+        };
+        }
+    });
+
+    // Step 2: Sort levels within each hierarchy
+    Object.values(mergedData).forEach(dimension => {
+        Object.values(dimension.hierarchies).forEach(hierarchy => {
+        const levelsMap = hierarchy.levels;
+        const levels = Object.values(levelsMap);
+
+        // Create a map of child to parent
+        const parentMap = {};
+        levels.forEach(level => {
+            if (level.parentLevel) {
+            parentMap[level.name] = level.parentLevel;
+            }
+        });
+
+        // Find the root levels (levels that are not a child of any other level)
+        const rootLevels = levels.filter(level => !Object.values(parentMap).includes(level.name));
+
+        // Sort levels starting from the root level
+        const sortedLevels = [];
+        const visited = new Set();
+
+        const addLevel = (level) => {
+            if (!visited.has(level.name)) {
+                visited.add(level.name);
+                sortedLevels.push(level);
+                const children = levels.filter(l => l.parentLevel === level.name);
+                children.forEach(addLevel);
+            }
+        };
+
+        rootLevels.forEach(addLevel);
+        levels.forEach(addLevel);
+
+        
+        hierarchy.levels = sortedLevels.reverse();
+        });
+    });
+
+    // Convert mergedData to the desired structure
+    const result = {
+        dimension: Object.values(mergedData).map(dimension => ({
+        name: dimension.name,
+        hierarchies: Object.values(dimension.hierarchies).map(hierarchy => ({
+            name: hierarchy.name,
+            levels: hierarchy.levels
+        }))
+        }))
+    };
+    return result
+}
 
 // export default handler;
