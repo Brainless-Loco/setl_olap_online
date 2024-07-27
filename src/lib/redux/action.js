@@ -1,10 +1,4 @@
-import { INCREMENT, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_TBOX } from "./type";
-
-
-export const increment = (ektaVal) => ({ 
-    type: INCREMENT,
-    incVal:ektaVal
-});
+import { ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
 
 export const update_TBox = (tbox)=> ({
     type: UPDATE_TBOX,
@@ -24,4 +18,19 @@ export const update_dataset = (dataset) => ({
 export const update_dataset_list = (datasetList) => ({
     type: UPDATE_DATASET_LIST,
     datasetList:datasetList
+})
+
+export const add_to_prefix_list = (prefixes) => ({
+    type: ADD_TO_PREFIX_LIST,
+    prefixes: prefixes
+})
+
+export const update_total_num_of_observations = (observations) =>({
+    type: UPDATE_TOTAL_NUM_OF_OBSERVATIONS,
+    observations: observations
+})
+
+export const update_dimension_tree = (treeStructures)=>({
+    type: UPDATE_DIMENSION_TREES,
+    treeStructures: treeStructures
 })

@@ -1,22 +1,19 @@
-import { INCREMENT, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_TBOX } from "./type";
+import { ADD_TO_PREFIX_LIST, INCREMENT, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
 
 
 const datasetInitialState = {
     tbox:'',
     abox: '',
-    treeStructure:'',
+    treeStructures:{},
     dataset:'',
-    value:0,
-    datasetList:[]
+    prefixes: {},
+    datasetList:[],
+    totalNumOfObservations:0
 
 }
 
 const datasetReducer = (state = datasetInitialState, action) => {
     switch (action.type) {
-        case INCREMENT:
-            return { ...state, 
-                value: state.value+action.incVal
-        };
         case UPDATE_TBOX:
             return {
                 ...state,
@@ -25,7 +22,7 @@ const datasetReducer = (state = datasetInitialState, action) => {
         case UPDATE_ABOX:
             return{
                 ...state,
-                abox:action.abox
+                abox: action.abox
             }
         case UPDATE_DATASET:
             return{
@@ -36,6 +33,21 @@ const datasetReducer = (state = datasetInitialState, action) => {
             return{
                 ...state,
                 datasetList: action.datasetList
+            }
+        case ADD_TO_PREFIX_LIST:
+            return{
+                ...state,
+                prefixes : action.prefixes
+            }
+        case UPDATE_TOTAL_NUM_OF_OBSERVATIONS:
+            return{
+                ...state,
+                totalNumOfObservations: action.observations
+            }
+        case UPDATE_DIMENSION_TREES:
+            return{
+                ...state,
+                treeStructures: action.treeStructures
             }
         default:
             return state;

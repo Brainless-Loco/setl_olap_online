@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { update_ABox, update_dataset_list, update_TBox } from "@/lib/redux/action"
+import { add_to_prefix_list, update_ABox, update_dataset_list, update_TBox } from "@/lib/redux/action"
 import { Typography } from "@mui/material"
 
 const FileListTab = ({}) => {
@@ -15,6 +15,7 @@ const FileListTab = ({}) => {
 
     const tbox = useSelector((state) => state.datasetReducer.tbox);
     const abox = useSelector((state) => state.datasetReducer.abox);
+    const prefixes = useSelector((state) => state.datasetReducer.prefixes);
 
     const [graphs, setGraphs] = useState([])
     
@@ -37,8 +38,26 @@ const FileListTab = ({}) => {
         )
         if(res){
             const data = await res.json()
-            console.log(data.datasetList)
-            dispatch(update_dataset_list(data.datasetList))
+            var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
+            const tempDatasetList = []
+            let datasetID = '';
+            data.datasetList.forEach(prefix=>{
+                prefix = prefix.split('#')
+                if(prefix[0] in tempPrefixes !== true){
+
+                    tempPrefixes[prefix[0]] =  "dataset"+datasetID;
+                    tempPrefixes["dataset"+datasetID] =  prefix[0];
+                    
+                    tempDatasetList.push("dataset"+datasetID+":"+prefix[1]);
+                    if(datasetID === '') datasetID = 1;
+                    else datasetID++;
+                }
+                else{
+                    tempDatasetList.push(tempPrefixes[prefix[0]]+":"+prefix[1]);
+                }
+            })
+            dispatch(update_dataset_list(tempDatasetList))
+            dispatch(add_to_prefix_list(tempPrefixes))
         }
         else{
             console.log("couldn't fetch the dataset list...")
@@ -48,6 +67,7 @@ const FileListTab = ({}) => {
     useEffect(() => {
         getGraphList();
     }, [])
+    
 
     return (
         <Box sx={{width: 'auto',display:'flex',justifyContent:'center',flexDirection:'column',flexWrap:'wrap',gap:'5px'}}>
