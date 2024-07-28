@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box"
-import Typography from '@mui/material/Typography'
 import { useEffect, useState } from "react"
 import FormControl from "@mui/material/FormControl"
 import InputLabel from '@mui/material/InputLabel'
@@ -7,9 +6,10 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Dimension from "@/components/TreeStructure/Dimension"
 import { useDispatch, useSelector } from "react-redux"
-import { update_dataset, update_dimension_tree, update_measure_list, update_total_num_of_observations } from "@/lib/redux/action"
+import { add_to_prefix_list, update_dataset, update_dimension_tree, update_measure_list, update_schema_iri, update_total_num_of_observations } from "@/lib/redux/action"
 import { CircularProgress } from "@mui/material"
 import Measure from "@/components/TreeStructure/Measure"
+import { Troubleshoot } from "@mui/icons-material"
 
 
 const DatasetTab = ({}) => {
@@ -17,6 +17,7 @@ const DatasetTab = ({}) => {
     const dispatch = useDispatch()
 
     const [loading, setLoading] = useState(false)
+    const [schemaName, setSchemaName] = useState('')
 
     const tbox = useSelector((state) => state.datasetReducer.tbox);
     const abox = useSelector((state) => state.datasetReducer.abox);
@@ -30,17 +31,42 @@ const DatasetTab = ({}) => {
 
     const measuresList = useSelector((state) => state.datasetReducer.measuresList);
 
-    const getNumOfObservations = async()=>{
+    const getMetaDataOfDataset = async()=>{
         const splittedDataset = dataset.split(':')
         var datasetIRI = prefixes[splittedDataset[0]]+'#'+splittedDataset[1]
-        const res = await fetch('/api/get_observation_number', {
+        const res = await fetch('/api/get_metadata_of_dataset', {
             method: "POST",
             body:JSON.stringify({tbox:tbox,abox:abox,dataset:datasetIRI})}
         )
         if(res){
-            const data = await res.json()
-            
-            dispatch(update_total_num_of_observations(data.totalObservations))
+            var data = await res.json()
+            data = data.data
+            if(data){
+                const splittedSchemaIRI = data.cuboid.value.split('#')
+                var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
+                if(splittedSchemaIRI[0] in tempPrefixes !== true){
+                    var tempID = Math.floor((Math.random() * 100) + 1);
+                    if("mdStructure" in tempPrefixes !==Troubleshoot) tempID = ""
+                    else{
+                        while(("mdStructure"+tempID) in tempPrefixes){ 
+                            tempID = Math.floor((Math.random() * 100) + 1);
+                        }
+                    }
+                    tempPrefixes[splittedSchemaIRI[0]] =  "mdStructure"+tempID;
+                    tempPrefixes["mdStructure"+tempID] =  splittedSchemaIRI[0];
+                    
+                    setSchemaName("mdStructure"+tempID+":"+splittedSchemaIRI[1]);
+                }    
+                else{
+                    setSchemaName(tempPrefixes[splittedSchemaIRI[0]]+":"+splittedSchemaIRI[1]);
+                }
+                dispatch(add_to_prefix_list(tempPrefixes))
+            }
+            else{
+                dispatch(update_schema_iri(""))
+                dispatch(update_total_num_of_observations(0))
+                setSchemaName('')
+            }
 
         }
         else{
@@ -73,6 +99,8 @@ const DatasetTab = ({}) => {
         setLoading(false)
     }
 
+    // console.log(treeStructures)
+
     const getMeasureList = async () =>{
         setLoading(true) 
         const splittedDataset = dataset.split(':')
@@ -97,13 +125,10 @@ const DatasetTab = ({}) => {
         setLoading(false)
     }
 
-    
-    console.log(measuresList)
-
 
     useEffect(() => {
         if(dataset.length>0) {
-            getNumOfObservations()
+            getMetaDataOfDataset()
             getTreeStructure()
             getMeasureList()
         }
@@ -111,13 +136,12 @@ const DatasetTab = ({}) => {
 
     return (
         <Box sx={{width: '100%',marginTop:'5px'}}>
-            <small>Total Number of Observations: {totalNumOfObservations}</small>
-            <FormControl fullWidth className="mt-5">
+            <FormControl fullWidth className="">
                 <InputLabel id='dataset-label' sx={{fontSize:'90%',verticalAlign:'middle',top:'-10%'}}>Datasets</InputLabel>
                 <Select
                     disabled={datasetList.length<1}
                     labelId="dataset-select"
-                    sx={{width:'100%',height:'40px',marginBottom:'10px'}}
+                    sx={{width:'100%',height:'40px'}}
                     label='Dataset'
                     value={dataset}
                     onChange={(e)=>dispatch(update_dataset(e.target.value))}>
@@ -128,6 +152,10 @@ const DatasetTab = ({}) => {
 
                 </Select>
             </FormControl>
+            <Box className="flex flex-col border-y-2 mt-3">
+                <small>Schema IRI: {schemaName}</small>
+                <small>Total Number of Observations: {totalNumOfObservations}</small>
+            </Box>
 
             <Box>
                 <b>Dimensions</b>

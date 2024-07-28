@@ -9,15 +9,19 @@ export async function POST (request=Request) {
 
     const client = new SparqlClient()
     const sparql = "PREFIX qb:	<http://purl.org/linked-data/cube#>\r\n"
-        + `SELECT (count(?o) AS ?numobs)\n`
+        + `SELECT distinct(?cuboid) (count(?o) AS ?numobs)\n`
         + `FROM<${tbox}>\nFROM<${abox}>\n`
-        + `WHERE { ?o a qb:Observation;
-        <http://purl.org/linked-data/cube#dataSet> <${dataset}>.}`
+        + `WHERE {\n` 
+        + `\t?o a qb:Observation;\n`
+        + `\t\t<http://purl.org/linked-data/cube#dataSet> <${dataset}>.\n`
+        + `\t<${dataset}> qb:structure ?cuboid.\n`
+        + `\n}`
+
 
     const result = await client.query(sparql)
-    const data = result.data.results.bindings[0].numobs.value
+    const data = result.data.results.bindings[0]
 
-    return NextResponse.json({totalObservations:data });
+    return NextResponse.json({data});
 }
 
 

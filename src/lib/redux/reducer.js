@@ -1,16 +1,24 @@
-import { ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
+import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_SCHEMA_IRI, UPDATE_SELECTED_LEVEL_DATA, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
 
 
 const datasetInitialState = {
     tbox:'',
     abox: '',
-    treeStructures:{},
-    measuresList:{},
-    dataset:'',
     prefixes: {},
     datasetList:[],
-    totalNumOfObservations:0
+    dataset:'',
+    schemaIRI:'',
+    totalNumOfObservations:0,
+    treeStructures:{},
+    measuresList:{},
+    allLevelData:{},
+    selectedLevelData:{}
 
+}
+
+const selectionForQueryState = {
+    selectedLevels:[],
+    selectedMeasures:[]
 }
 
 const datasetReducer = (state = datasetInitialState, action) => {
@@ -40,6 +48,11 @@ const datasetReducer = (state = datasetInitialState, action) => {
                 ...state,
                 prefixes : action.prefixes
             }
+        case UPDATE_SCHEMA_IRI:
+            return{
+                ...state,
+                schemaIRI : action.schemaIRI
+            }
         case UPDATE_TOTAL_NUM_OF_OBSERVATIONS:
             return{
                 ...state,
@@ -53,15 +66,36 @@ const datasetReducer = (state = datasetInitialState, action) => {
         case UPDATE_MEASURE_LIST:
             return{
                 ...state,
-                measuresList: action.measuresList            }
+                measuresList: action.measuresList
+            }
+        case UPDATE_SELECTED_LEVEL_DATA:
+            return{
+                ...state,
+                selectedLevelData: action.selectedLevelData
+            }
+        case ADD_TO_ALL_LEVEL_DATA:
+            return{
+                ...state,
+                allLevelData: {...state.allLevelData, [action.levelName]:action.newLevelData}
+            }
+
+
         default:
             return state;
     }
 };
 
+const queryReducer = (state=selectionForQueryState,action)=> {
+    switch (action.type) {
+        default:
+            return state;
+    }
+
+}
 
 const rootReducer = {
     datasetReducer:datasetReducer,
+    queryReducer: queryReducer
 };
   
 export default rootReducer;

@@ -2,24 +2,19 @@ import CardContent from "@mui/material/CardContent"
 import Card from '@mui/material/Card'
 import Box from '@mui/material/Box'
 import CardHeader from '@mui/material/CardHeader'
-import FileListTab from "./Sections/FileListTab"
-import DatasetTab from "./Sections/DatasetTab"
+import AttributeListTab from "./Sections/AttributeListTab"
 
 
-const Viewport1 = ({}) => {
+const Viewport2 = ({}) => {
 
     
 
     return (
         <Box className='w-4/12 '>
             <Card>
-                <CardHeader title='Structure Extraction' sx={{color:'#08094f',marginBottom:'0px',paddingBottom:'3px',paddingTop:'0px'}}/>
+                <CardHeader title='Instance Filtering' sx={{color:'#08094f',marginBottom:'0px',paddingBottom:'3px',paddingTop:'0px'}}/>
                 <CardContent sx={{paddingY:0}} style={flexSetting}>
-                    <Box sx={{height: 'auto', paddingY:0, marginY:0, overflowY: 'auto',width:'100%'}}>
-                        <FileListTab/>
-                    </Box>
-                    <DatasetTab/>
-                    
+                    <AttributeListTab/>
                 </CardContent>
             </Card>
         </Box>
@@ -37,4 +32,4 @@ const flexSetting = {
     overflowY:'auto',
 }
 
-export default Viewport1
+export default Viewport2

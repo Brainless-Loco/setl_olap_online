@@ -91,49 +91,52 @@ const mergeResults = (data) => {
     // Step 2: Sort levels within each hierarchy
     Object.values(mergedData).forEach(dimension => {
         Object.values(dimension.hierarchies).forEach(hierarchy => {
-        const levelsMap = hierarchy.levels;
-        const levels = Object.values(levelsMap);
+            const levelsMap = hierarchy.levels;
+            const levels = Object.values(levelsMap);
 
-        // Create a map of child to parent
-        const parentMap = {};
-        levels.forEach(level => {
-            if (level.parentLevel) {
-            parentMap[level.name] = level.parentLevel;
-            }
-        });
+            // Create a map of child to parent
+            const parentMap = {};
+            levels.forEach(level => {
+                if (level.parentLevel) {
+                parentMap[level.name] = level.parentLevel;
+                }
+            });
 
-        // Find the root levels (levels that are not a child of any other level)
-        const rootLevels = levels.filter(level => !Object.values(parentMap).includes(level.name));
+            // Find the root levels (levels that are not a child of any other level)
+            const rootLevels = levels.filter(level => !Object.values(parentMap).includes(level.name));
 
-        // Sort levels starting from the root level
-        const sortedLevels = [];
-        const visited = new Set();
+            // Sort levels starting from the root level
+            const sortedLevels = [];
+            const visited = new Set();
 
-        const addLevel = (level) => {
-            if (!visited.has(level.name)) {
-                visited.add(level.name);
-                sortedLevels.push(level);
-                const children = levels.filter(l => l.parentLevel === level.name);
-                children.forEach(addLevel);
-            }
-        };
+            const addLevel = (level) => {
+                if (!visited.has(level.name)) {
+                    visited.add(level.name);
+                    level.inHierarchy = hierarchy.name
+                    level.inDimension = dimension.name
+                    sortedLevels.push(level);
+                    const children = levels.filter(l => l.parentLevel === level.name);
+                    children.forEach(addLevel);
+                }
+            };
 
-        rootLevels.forEach(addLevel);
-        levels.forEach(addLevel);
+            rootLevels.forEach(addLevel);
+            levels.forEach(addLevel);
 
-        
-        hierarchy.levels = sortedLevels.reverse();
+            hierarchy.levels = sortedLevels.reverse();
+
         });
     });
 
     // Convert mergedData to the desired structure
     const result = {
         dimension: Object.values(mergedData).map(dimension => ({
-        name: dimension.name,
-        hierarchies: Object.values(dimension.hierarchies).map(hierarchy => ({
-            name: hierarchy.name,
-            levels: hierarchy.levels
-        }))
+            name: dimension.name,
+            hierarchies: Object.values(dimension.hierarchies).map(hierarchy => ({
+                name: hierarchy.name,
+                levels: hierarchy.levels,
+                inDimension: dimension.name
+            }))
         }))
     };
     return result
