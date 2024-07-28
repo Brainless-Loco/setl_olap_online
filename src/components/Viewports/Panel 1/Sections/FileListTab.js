@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { add_to_prefix_list, update_ABox, update_dataset_list, update_TBox } from "@/lib/redux/action"
 import { Typography } from "@mui/material"
+import CircularProgress from '@mui/material/CircularProgress';
 
 const FileListTab = ({}) => {
 
@@ -18,6 +19,7 @@ const FileListTab = ({}) => {
     const prefixes = useSelector((state) => state.datasetReducer.prefixes);
 
     const [graphs, setGraphs] = useState([])
+    const [loading, setLoading ] = useState(false)
     
     const getGraphList = async () => {
         const res = await fetch('/api/get_graph_list', {method: "POST"})
@@ -32,6 +34,7 @@ const FileListTab = ({}) => {
     }
 
     const getDatasetList = async()=>{
+        setLoading(true)
         const res = await fetch('/api/get_dataset_list', {
             method: "POST",
             body:JSON.stringify({tbox:tbox})}
@@ -62,6 +65,7 @@ const FileListTab = ({}) => {
         else{
             console.log("couldn't fetch the dataset list...")
         }
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -70,12 +74,12 @@ const FileListTab = ({}) => {
     
 
     return (
-        <Box sx={{width: 'auto',display:'flex',justifyContent:'center',flexDirection:'column',flexWrap:'wrap',gap:'5px'}}>
+        <Box className="flex justify-center flex-col flex-wrap gap-3">
             <FormControl fullWidth>
-                <InputLabel id='filter-cond-label' sx={{fontSize:'12px'}}>TBox IRI</InputLabel>
+                <InputLabel id='tbox-select' sx={{fontSize:'12px'}}>TBox IRI</InputLabel>
                 <Select
-                    labelId="filter-cond-select"
-                    sx={{ height:'40px',}}
+                    labelId="tbox-select"
+                    sx={{ height:'40px'}}
                     label='TBox IRI'
                     value={tbox}
                     onChange={(e)=>dispatch(update_TBox(e.target.value))}
@@ -86,10 +90,10 @@ const FileListTab = ({}) => {
                 </Select>
             </FormControl>
 
-            <FormControl fullWidth sx={{ marginBottom: '10px' }}>
-                <InputLabel id='filter-cond-label' sx={{fontSize:'12px'}}>ABox IRI</InputLabel>
+            <FormControl fullWidth>
+                <InputLabel id='abox-select' sx={{fontSize:'12px'}}>ABox IRI</InputLabel>
                 <Select
-                    labelId="filter-cond-select"
+                    labelId="abox-select"
                     sx={{height:'40px' }}
                     label='ABox IRI'
                     value={abox}
@@ -106,10 +110,10 @@ const FileListTab = ({}) => {
                 </Typography>
             </Box>
             
-            <Button className="extractBtn" fullWidth variant='contained' 
+            <Button className="mb-4" fullWidth variant='contained' 
             onClick={() => getDatasetList()} type="button" 
             disabled={!tbox.length || !abox.length} >
-                Extract Datasets
+                {loading? <CircularProgress size={25} color="inherit"/>:"Extract Datasets"}
             </Button>
         </Box>
     )

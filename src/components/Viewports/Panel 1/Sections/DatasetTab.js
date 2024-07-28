@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Dimension from "@/components/TreeStructure/Dimension"
 import { useDispatch, useSelector } from "react-redux"
-import { add_to_prefix_list, update_dataset, update_dimension_tree, update_measure_list, update_schema_iri, update_total_num_of_observations } from "@/lib/redux/action"
+import { add_to_prefix_list, update_dataset, update_dimension_tree, update_measure_list } from "@/lib/redux/action"
 import { CircularProgress } from "@mui/material"
 import Measure from "@/components/TreeStructure/Measure"
 import { Troubleshoot } from "@mui/icons-material"
@@ -18,12 +18,12 @@ const DatasetTab = ({}) => {
 
     const [loading, setLoading] = useState(false)
     const [schemaName, setSchemaName] = useState('')
+    const [totalObs, setTotalObs] = useState(0)
 
     const tbox = useSelector((state) => state.datasetReducer.tbox);
     const abox = useSelector((state) => state.datasetReducer.abox);
     const dataset = useSelector((state) => state.datasetReducer.dataset)
     const datasetList = useSelector((state) => state.datasetReducer.datasetList)
-    const totalNumOfObservations = useSelector((state) => state.datasetReducer.totalNumOfObservations)
 
     const prefixes = useSelector((state) => state.datasetReducer.prefixes)
     
@@ -61,10 +61,9 @@ const DatasetTab = ({}) => {
                     setSchemaName(tempPrefixes[splittedSchemaIRI[0]]+":"+splittedSchemaIRI[1]);
                 }
                 dispatch(add_to_prefix_list(tempPrefixes))
+                setTotalObs(data.numobs.value)
             }
             else{
-                dispatch(update_schema_iri(""))
-                dispatch(update_total_num_of_observations(0))
                 setSchemaName('')
             }
 
@@ -135,7 +134,7 @@ const DatasetTab = ({}) => {
     }, [dataset])
 
     return (
-        <Box sx={{width: '100%',marginTop:'5px'}}>
+        <Box className="w-full mt-3">
             <FormControl fullWidth className="">
                 <InputLabel id='dataset-label' sx={{fontSize:'90%',verticalAlign:'middle',top:'-10%'}}>Datasets</InputLabel>
                 <Select
@@ -152,12 +151,12 @@ const DatasetTab = ({}) => {
 
                 </Select>
             </FormControl>
-            <Box className="flex flex-col border-y-2 mt-3">
+            <Box className="flex flex-col border-y-2 my-3">
                 <small>Schema IRI: {schemaName}</small>
-                <small>Total Number of Observations: {totalNumOfObservations}</small>
+                <small>Total Number of Observations: {totalObs}</small>
             </Box>
 
-            <Box>
+            <Box className="py-1">
                 <b>Dimensions</b>
                 {
                     dataset.length>0 && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]] && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]].dimension.map(d=>(
@@ -166,7 +165,7 @@ const DatasetTab = ({}) => {
                     
                 }
             </Box>
-            <Box>
+            <Box className="py-1">
                 <b>Measures</b>
                 {
                    dataset.length>0 && measuresList[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]] && measuresList[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]].Measures.map(m=>(

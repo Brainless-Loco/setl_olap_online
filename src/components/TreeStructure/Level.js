@@ -44,7 +44,6 @@ export default function Level({info}) {
         )
         if(res){
             const data = await res.json()
-            console.log(data.levelData)
             dispatch(update_selected_level_data(data.levelData))
             dispatch(add_to_all_level_data(info.name, data.levelData))
         }

@@ -1,4 +1,4 @@
-import { ADD_LEVEL, ADD_MEASURE, ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_LEVEL, REMOVE_MEASURE, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST, UPDATE_LEVEL_INSTANCES, UPDATE_MEASURE_LIST, UPDATE_SCHEMA_IRI, UPDATE_SELECTED_LEVEL_DATA, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
+import { ADD_LEVEL, ADD_MEASURE, ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_LEVEL, REMOVE_MEASURE, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST, UPDATE_LEVEL_INSTANCES, UPDATE_MEASURE_LIST, UPDATE_SCHEMA_IRI, UPDATE_SELECTED_LEVEL_DATA, UPDATE_TBOX } from "./type";
 
 export const update_TBox = (tbox)=> ({
     type: UPDATE_TBOX,
@@ -20,19 +20,9 @@ export const update_dataset_list = (datasetList) => ({
     datasetList:datasetList
 })
 
-export const update_schema_iri = (schemaIRI)=>({
-    type: UPDATE_SCHEMA_IRI,
-    schemaIRI:schemaIRI
-})
-
 export const add_to_prefix_list = (prefixes) => ({
     type: ADD_TO_PREFIX_LIST,
     prefixes: prefixes
-})
-
-export const update_total_num_of_observations = (observations) =>({
-    type: UPDATE_TOTAL_NUM_OF_OBSERVATIONS,
-    observations: observations
 })
 
 export const update_dimension_tree = (treeStructures)=>({

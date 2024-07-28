@@ -4,9 +4,12 @@ import FormControl from "@mui/material/FormControl"
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
+import Checkbox from '@mui/material/Checkbox';
+import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography'
 import {  useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { DataGrid } from '@mui/x-data-grid'
 
 export default function AttributeListTab() {
 
@@ -14,7 +17,26 @@ export default function AttributeListTab() {
     
     const [levelName, setLevelName] = useState('')
     const [selectedAttribute, setSelectedAttribute] = useState({originalIRI:'',prefixIRI:''})
-    const [selectedAttributeInstances, setSelectedAttributeInstances] = useState([])
+    const [selectedToBeViewedAttribute, setSelectedToBeViewedAttribute] = useState('')
+    const [selectedInstances, setSelectedInstances] = useState([])
+
+    const [rows, setRows] = useState([])
+    
+    const col = [{
+        field: selectedAttribute.prefixIRI,
+        headerName: selectedAttribute.prefixIRI,
+        width: 300,
+        renderCell: (params)=>{
+            return params.row.type === 'uri' ? (
+                <a style={{color:'blue'}} href={params.row.value} target="_blank" rel="noopener">
+                    {params.row.value}
+                </a>
+            ) : (
+            params.row.value
+            );
+        },
+        editable: false,
+      }]
 
     const selectedLevelData = useSelector((state) => state.datasetReducer.selectedLevelData);
     
@@ -60,16 +82,39 @@ export default function AttributeListTab() {
         dispatch(update_selected_level_data({...selectedLevelData,attributes:tempAttributeList}))
     }
 
+    const handleAttributesToBeViewed = (e) => {
+        const attributeIRIs = e.target.value;
+
+        setSelectedToBeViewedAttribute(attributeIRIs.join(","))
+      };
 
     useEffect(() => {
       if(selectedLevelData && selectedLevelData.levelName){ 
         update_level_name_prefix()
         update_attribute_name_prefix()
+        setSelectedAttribute({originalIRI:'',prefixIRI:''})
+        setSelectedToBeViewedAttribute('')
+        setRows([])
       }
     }, [selectedLevelData])
-    
 
-    console.log(selectedAttribute)
+    useEffect(() => {
+        if(selectedAttribute.originalIRI.length>0){
+            var tempAttribute = selectedLevelData.attributes.filter((a) =>
+                a.attributeName == selectedAttribute.originalIRI
+            )
+            tempAttribute = tempAttribute[0]
+
+            const tempRows = tempAttribute.attributeValues.map((a,id) =>{
+                return {...a, id:id}
+            })
+            setRows(tempRows)
+        }
+    }, [selectedAttribute])
+
+
+    const renderValue = (selected) => selected.join(', ');
+
 
     return (
         <Box className="w-full">
@@ -82,13 +127,17 @@ export default function AttributeListTab() {
                     labelId="level-attribute-select"
                     sx={{width:'100%',height:'40px'}}
                     label='Level Attribute'
-                    value={selectedAttribute.originalIRI+'&&'+selectedAttribute.prefixIRI}
+                    disabled={!(selectedLevelData.levelName)}
+                    value={
+                        selectedAttribute.originalIRI !=="" ?
+                        selectedAttribute.originalIRI+'&&'+selectedAttribute.prefixIRI :
+                        ''
+                    }
                     onChange={(e)=>{
                         setSelectedAttribute({
                             originalIRI:e.target.value.split('&&')[0],
                             prefixIRI: e.target.value.split('&&')[1]
-                        })}}
-                    defaultValue={"Select a property"}>
+                        })}}>
                     {
                         selectedLevelData && selectedLevelData.attributes && selectedLevelData.attributes[0].prefixIRI && selectedLevelData.attributes.map((a, idx) => (
                             <MenuItem name={a.prefixIRI} key={a.attributeName} value={a.attributeName+'&&'+a.prefixIRI}>{a.prefixIRI}</MenuItem>
@@ -116,21 +165,39 @@ export default function AttributeListTab() {
             </FormControl>
 
             <FormControl fullWidth sx={{ marginTop: '10px' }}>
-                <InputLabel id='level-prop-label' sx={{fontSize:'90%',top:'-10%'}}>To Be Viewed Property</InputLabel>
+                <InputLabel id='level-attr-label' sx={{fontSize:'90%',top:'-10%'}}>To Be Viewed Property</InputLabel>
                 <Select
-                    labelId="level-prop-to-be-viewed"
+                    labelId="level-attr-to-be-viewed"
                     sx={{ width: '100%',height:'40px' }}
-                    label='Level Property to be viewed'
-                    value={''}
-                    onChange={()=>{}}
-                    defaultValue={"Select a property"}>
+                    label='To be Viewed Attributes'
+                    disabled={!(selectedLevelData.levelName)}
+                    value={selectedToBeViewedAttribute ? selectedToBeViewedAttribute.split(',') : []}
+                    onChange={(e)=>{handleAttributesToBeViewed(e)}}
+                    renderValue={renderValue}
+                    multiple
+                    >
                     {
-                        // levelAttributes.map((item, idx) => (
-                        //     <MenuItem key={`level_prop_${idx}`} value={item.name}>mdAttribute:{item.name}</MenuItem>
-                        // ))
+                        selectedLevelData && selectedLevelData.attributes && selectedLevelData.attributes[0].prefixIRI && selectedLevelData.attributes.map((a, idx) => (
+                            
+                            <MenuItem name={a.prefixIRI} key={a.attributeName} value={a.prefixIRI}>
+                                <Checkbox checked={selectedToBeViewedAttribute.split(',').indexOf(a.prefixIRI) > -1} />
+                                <ListItemText primary={a.prefixIRI} />
+                          </MenuItem>
+                        ))
                     }
                 </Select>
             </FormControl>
+            <Box>
+                <Box className={"mt-2"} sx={{ height: '60vh', width: '100%' }}>
+
+                    <DataGrid 
+                        rows={rows}
+                        columns={col}
+                        checkboxSelection
+                    />
+                </Box>
+            </Box>
+            
     </Box>
   )
 }

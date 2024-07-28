@@ -1,4 +1,4 @@
-import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_SCHEMA_IRI, UPDATE_SELECTED_LEVEL_DATA, UPDATE_TBOX, UPDATE_TOTAL_NUM_OF_OBSERVATIONS } from "./type";
+import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_TBOX } from "./type";
 
 
 const datasetInitialState = {
@@ -7,13 +7,10 @@ const datasetInitialState = {
     prefixes: {},
     datasetList:[],
     dataset:'',
-    schemaIRI:'',
-    totalNumOfObservations:0,
     treeStructures:{},
     measuresList:{},
     allLevelData:{},
     selectedLevelData:{}
-
 }
 
 const selectionForQueryState = {
@@ -47,16 +44,6 @@ const datasetReducer = (state = datasetInitialState, action) => {
             return{
                 ...state,
                 prefixes : action.prefixes
-            }
-        case UPDATE_SCHEMA_IRI:
-            return{
-                ...state,
-                schemaIRI : action.schemaIRI
-            }
-        case UPDATE_TOTAL_NUM_OF_OBSERVATIONS:
-            return{
-                ...state,
-                totalNumOfObservations: action.observations
             }
         case UPDATE_DIMENSION_TREES:
             return{
