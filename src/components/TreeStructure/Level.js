@@ -60,8 +60,8 @@ export default function Level({info}) {
 
     return (
         <Box onClick={()=>{selectThisLevel()}}>
-            <Box sx={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',cursor:'pointer'}}>
-                <Box  className='w-full'  sx={{position:'relative',borderColor:'gray',borderLeftWidth:'2px'}}>
+            <Box className="flex flex-wrap justify-between cursor-pointer">
+                <Box  className='w-full relative' sx={{borderColor:'gray',borderLeftWidth:'2px'}}>
                     <span style={leftLine}></span>
                     {/* <span style={leftCircle}></span> */}
                     &nbsp;&nbsp;&nbsp;&nbsp;

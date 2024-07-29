@@ -39,8 +39,8 @@ export default function Hierarchy({info}) {
 
     return (
         <Box sx={{borderColor:'gray'}}>
-           <Box onClick={()=>setLevelShow(!levelShow)} sx={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',cursor:'pointer'}}>
-                <Box className='w-11/12' sx={{position:'relative',borderColor:'gray',borderLeftWidth:'2px'}}>
+           <Box onClick={()=>setLevelShow(!levelShow)} className="flex flex-wrap justify-between cursor-pointer">
+                <Box className='w-11/12 relative' sx={{borderColor:'gray',borderLeftWidth:'2px'}}>
                     <span style={leftLine}></span>
                     {/* <span style={leftCircle}></span> */}
                     &nbsp;&nbsp;&nbsp;&nbsp;

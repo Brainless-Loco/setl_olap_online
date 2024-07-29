@@ -17,7 +17,7 @@ const Viewport1 = ({}) => {
                 <Box sx={{height: 'auto', paddingY:0, marginY:0, overflowY: 'auto',width:'100%'}}>
                     <FileListTab/>
                 </Box>
-                <Box className="py-0 my-0 overflow-y-auto w-full" sx={{minHeight:'60vh'}}>
+                <Box className="py-0 my-0 overflow-y-auto w-full" sx={{height:'60vh'}}>
                     <DatasetTab/>
                 </Box>
                 

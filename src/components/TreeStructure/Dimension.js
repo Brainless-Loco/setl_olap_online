@@ -41,8 +41,8 @@ export default function Dimension({info}) {
 
     return (
         <Box sx={{borderColor:'gray',borderLeftWidth:'2px'}}>
-            <Box onClick={()=>setHierarchyShow(!hierarchyShow)} sx={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',cursor:'pointer'}}>
-                <Box className='w-11/12'>__    
+            <Box onClick={()=>setHierarchyShow(!hierarchyShow)}className="flex flex-wrap justify-between cursor-pointer">
+                <Box className='w-11/12'>__   
                     {dimensionName}
                 </Box>
                 <Box  className='w-1/12 text-center'>
