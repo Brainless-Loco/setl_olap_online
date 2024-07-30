@@ -121,7 +121,7 @@ export default function AttributeListTab() {
             <Typography sx={{color:'#08094f',fontSize:'14px'}}>
                 Selected level: <b>{selectedLevelData && levelName.length>0 && levelName}</b>
             </Typography>
-            <FormControl fullWidth sx={{ marginTop: '10px' }}>
+            <FormControl fullWidth sx={{ marginTop: '5px' }}>
                 <InputLabel id='level-attribute-label' sx={{fontSize:'90%',top:'-10%'}}>Attributes</InputLabel>
                 <Select
                     labelId="level-attribute-select"
@@ -145,7 +145,7 @@ export default function AttributeListTab() {
                     }
                 </Select>
             </FormControl>
-            <FormControl fullWidth sx={{ marginTop: '10px' }}>
+            <FormControl fullWidth sx={{ marginTop: '15px' }}>
                 <InputLabel id='filter-cond-label'>Filter Conditions</InputLabel>
                 <Select
                     labelId="filter-cond-select"
@@ -164,7 +164,7 @@ export default function AttributeListTab() {
                 </Select>
             </FormControl>
 
-            <FormControl fullWidth sx={{ marginTop: '10px' }}>
+            <FormControl fullWidth sx={{ marginTop: '15px' }}>
                 <InputLabel id='level-attr-label' sx={{fontSize:'90%',top:'-10%'}}>To Be Viewed Property</InputLabel>
                 <Select
                     labelId="level-attr-to-be-viewed"
@@ -187,15 +187,13 @@ export default function AttributeListTab() {
                     }
                 </Select>
             </FormControl>
-            <Box>
-                <Box className={"mt-2"} sx={{ height: '60vh', width: '100%' }}>
+            <Box className={"mt-2"} sx={{ height: '75vh', width: '100%' }}>
 
-                    <DataGrid 
-                        rows={rows}
-                        columns={col}
-                        checkboxSelection
-                    />
-                </Box>
+                <DataGrid 
+                    rows={rows}
+                    columns={col}
+                    checkboxSelection
+                />
             </Box>
             
     </Box>

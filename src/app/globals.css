@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(163, 161, 161); 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #595858; 
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
