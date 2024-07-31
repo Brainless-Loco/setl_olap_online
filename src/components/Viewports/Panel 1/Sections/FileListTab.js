@@ -17,6 +17,7 @@ const FileListTab = ({}) => {
     const tbox = useSelector((state) => state.datasetReducer.tbox);
     const abox = useSelector((state) => state.datasetReducer.abox);
     const prefixes = useSelector((state) => state.datasetReducer.prefixes);
+    const selectedLevels = useSelector((state) => state.queryReducer.selectedLevels);
 
     const [graphs, setGraphs] = useState([])
     const [loading, setLoading ] = useState(false)
@@ -31,6 +32,7 @@ const FileListTab = ({}) => {
         else{
             console.log("couldn't fetch the graphs...")
         }
+        console.log("Already called the function")
     }
 
     const getDatasetList = async()=>{
@@ -71,6 +73,8 @@ const FileListTab = ({}) => {
     useEffect(() => {
         getGraphList();
     }, [])
+
+    console.log(selectedLevels)
     
 
     return (

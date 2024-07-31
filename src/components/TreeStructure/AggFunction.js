@@ -73,7 +73,6 @@ export default function AggFunction({info, measureInfo}) {
         if(info && info.aggFuncName.length>0) update_aggFunc_name_prefix()
       }, [info])
 
-
     return (
         <Box onClick={update_agg_function_selection} className="flex w-full flex-wrap justify-between cursor-pointer">
             <Box  className='w-full relative'  sx={{borderColor:'gray',borderLeftWidth:'2px'}}>

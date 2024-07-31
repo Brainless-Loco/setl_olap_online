@@ -1,4 +1,4 @@
-import { add_to_all_level_data, add_to_prefix_list, update_selected_level_data } from "@/lib/redux/action";
+import { add_to_all_level_data, add_to_prefix_list, try_to_add_level, update_selected_level_data } from "@/lib/redux/action";
 import Box from "@mui/material/Box"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,6 +50,7 @@ export default function Level({info}) {
         else{
             console.log("couldn't fetch the tree structure...")
         }
+        dispatch(try_to_add_level({levelName:info.name, prefixName:levelName}))
     }
 
 

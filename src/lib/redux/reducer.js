@@ -1,5 +1,5 @@
-import { remove_agg_func } from "./helper";
-import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX } from "./type";
+import { remove_agg_func, tryToAddLevel } from "../custom/helper";
+import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, TRY_TO_ADD_LEVEL, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX } from "./type";
 
 
 const datasetInitialState = {
@@ -75,6 +75,7 @@ const datasetReducer = (state = datasetInitialState, action) => {
 
 const queryReducer = (state=selectionForQueryState,action)=> {
     switch (action.type) {
+        // Measure Works
         case UPDATE_SELECTED_MEASURE_LIST:
             return{
                 ...state,
@@ -91,6 +92,16 @@ const queryReducer = (state=selectionForQueryState,action)=> {
                 selectedMeasures: remove_agg_func(state.selectedMeasures, action.measureName, action.aggFuncName)
 
             }
+
+        // Level Works
+        case TRY_TO_ADD_LEVEL:
+            return{
+                ...state,
+                selectedLevels: tryToAddLevel(action.levelInfo, state.selectedLevels)
+            }
+        
+
+        
         default:
             return state;
     }
