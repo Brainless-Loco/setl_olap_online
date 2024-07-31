@@ -1,3 +1,4 @@
+import { remove_agg_func } from "./helper";
 import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX } from "./type";
 
 
@@ -85,20 +86,9 @@ const queryReducer = (state=selectionForQueryState,action)=> {
                 selectedMeasures: state.selectedMeasures.filter(m=>m.measureName!==action.measureName)
             }
         case REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE:
-            var tempMeasures = state.selectedMeasures.map(measure => {
-                if (measure.measureName === action.measureName) {
-                    const newAggFunctions = measure.aggFunctions.filter(aggFunc => aggFunc.aggFuncName !== action.aggFuncName);
-                    if (newAggFunctions.length === 0) {
-                        return null;
-                    }
-                    return { ...measure, aggFunctions: newAggFunctions };
-                }
-                return measure;
-            });
-            tempMeasures = tempMeasures.filter(measure => measure !== null);
             return{
                 ...state,
-                selectedMeasures: tempMeasures
+                selectedMeasures: remove_agg_func(state.selectedMeasures, action.measureName, action.aggFuncName)
 
             }
         default:
@@ -113,3 +103,16 @@ const rootReducer = {
 };
   
 export default rootReducer;
+
+
+
+/*
+queryReducer.selectedMeasures: [
+    {
+        measureName: "namespace.com/Country",
+        measurePrefixName: "mdProperty:Country",
+        aggFunctions: [
+            { aggFuncName: "namespace.com/avg", prefixName: "qb4o:avg" }
+        ]
+    }...
+*/
