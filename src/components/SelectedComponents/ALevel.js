@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 
 export default function ALevel({info}) {
+    
+    const dispatch = useDispatch()
 
     const [selectedAttribute, setselectedAttribute] = useState('')
 

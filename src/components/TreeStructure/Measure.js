@@ -44,7 +44,7 @@ export default function Measure({info}) {
                 <Box className='w-11/12'>__    
                     {measureName}
                 </Box>
-                <Box  className='w-1/12 text-center'>
+                <Box className='w-1/12 text-center'>
                    <KeyboardArrowDownIcon/>
                 </Box>
             </Box>
@@ -52,7 +52,7 @@ export default function Measure({info}) {
                 <small>Aggregate Functions</small>
                 {
                     info && info.measureName.length>0 && info.aggFunctions.map(A=>(
-                        <AggFunction key={A.aggFuncName} info={A}/>
+                        <AggFunction key={A.aggFuncName} measureInfo={{"measureName": info.measureName,"measurePrefixName":measureName}} info={A}/>
                     ))
                     
                 }

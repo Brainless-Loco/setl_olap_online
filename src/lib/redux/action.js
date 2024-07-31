@@ -1,4 +1,4 @@
-import { ADD_LEVEL, ADD_MEASURE, ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_LEVEL, REMOVE_MEASURE, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST, UPDATE_LEVEL_INSTANCES, UPDATE_MEASURE_LIST, UPDATE_SCHEMA_IRI, UPDATE_SELECTED_LEVEL_DATA, UPDATE_TBOX } from "./type";
+import { ADD_LEVEL, ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_LEVEL, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST, UPDATE_LEVEL_INSTANCES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX } from "./type";
 
 export const update_TBox = (tbox)=> ({
     type: UPDATE_TBOX,
@@ -59,14 +59,20 @@ export const remove_level = (levelName) => ({
     levelName: levelName
 })
 
-export const add_measure = (measure) => ({
-    type: ADD_MEASURE,
-    measure: measure
+export const update_selected_measure_list = (measures) => ({
+    type: UPDATE_SELECTED_MEASURE_LIST,
+    measures: measures
 })
 
-export const remove_measure = (measure) => ({
-    type: REMOVE_MEASURE,
-    measure: measure
+export const remove_measure_from_selected_measure_list = (measureName) => ({
+    type: REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST,
+    measureName: measureName
+})
+
+export const remove_an_aggregate_function_from_a_measure = (aggFuncName, measureName) => ({
+    type: REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE,
+    aggFuncName: aggFuncName,
+    measureName: measureName
 })
 
 export const update_level_instances = (levelName, levelInstances) => ({
