@@ -106,7 +106,7 @@ const mergeResults = (data) => {
             const rootLevels = levels.filter(level => !Object.values(parentMap).includes(level.name));
 
             // Sort levels starting from the root level
-            const sortedLevels = [];
+            let sortedLevels = [];
             const visited = new Set();
 
             const addLevel = (level) => {
@@ -123,7 +123,13 @@ const mergeResults = (data) => {
             rootLevels.forEach(addLevel);
             levels.forEach(addLevel);
 
-            hierarchy.levels = sortedLevels.reverse();
+            sortedLevels = sortedLevels.map((l)=>{
+                return {...l, rollUpSerial:sortedLevels}
+            })
+
+            sortedLevels = sortedLevels.reverse()
+
+            hierarchy.levels = sortedLevels;
 
         });
     });

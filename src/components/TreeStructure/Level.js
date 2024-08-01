@@ -50,10 +50,8 @@ export default function Level({info}) {
         else{
             console.log("couldn't fetch the tree structure...")
         }
-        dispatch(try_to_add_level({levelName:info.name, prefixName:levelName}))
+        dispatch(try_to_add_level({levelName:info.name, prefixName:levelName,inDimension:info.inDimension,rollUpSerial:info.rollUpSerial}))
     }
-
-
 
     useEffect(() => {
         if(info && info.name.length>0) update_level_name_prefix()

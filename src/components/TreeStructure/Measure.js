@@ -10,9 +10,33 @@ export default function Measure({info}) {
 
     const [aggFuncShow, setAggFuncShow] = useState(false)
     const [measureName, setMeasureName] = useState('')
+    const [rangeName, setRangeName] = useState('')
 
     
     const prefixes = useSelector((state) => state.datasetReducer.prefixes);
+
+    const getPrefixName = (rangeName) => {
+        const splittedName = rangeName.split('#');
+        const prefixKey = splittedName[0];
+    
+        let prefixName;
+        
+        var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
+
+        if (prefixKey === 'http://www.w3.org/2001/XMLSchema') {
+            return 'xsd';
+        } else if (prefixKey in tempPrefixes) {
+            prefixName = prefixes[prefixKey];
+        } else {
+            let tempID = (Object.keys(tempPrefixes).length)/2 + 1;
+            tempPrefixes[prefixKey] = "range" + tempID;
+            tempPrefixes["range" + tempID] = prefixKey;
+            prefixName = "range" + tempID;
+        }
+    
+        dispatch(add_to_prefix_list(tempPrefixes))
+        return prefixName;
+    };
 
     const update_measure_name_prefix = ()=>{
         const splittedName = info.measureName.split('#')
@@ -24,7 +48,7 @@ export default function Measure({info}) {
             tempPrefixes["mdProperty"+tempID] =  splittedName[0];
             
             setMeasureName("mdProperty"+tempID+":"+splittedName[1]);
-            if(tempID === '') tempID = 1;
+            if(tempID === '') tempID = (Object.keys(prefixes).length)/2;
             else tempID++;
         }
         else{
@@ -34,7 +58,10 @@ export default function Measure({info}) {
     }
 
     useEffect(() => {
-      if(info && info.measureName.length>0) update_measure_name_prefix()
+      if(info && info.measureName.length>0) {
+        update_measure_name_prefix()
+        setRangeName(getPrefixName(info.range.rangeName)+':'+info.range.rangeValue)
+    }
     }, [info])
     
 
@@ -49,10 +76,11 @@ export default function Measure({info}) {
                 </Box>
             </Box>
             <Box sx={{paddingLeft:'15px'}} hidden={!aggFuncShow}>
-                <small>Aggregate Functions</small>
+                <small className="block my-0 py-0">{rangeName}</small>
+                <small className="block my-0 py-0">Aggregate Functions</small>
                 {
                     info && info.measureName.length>0 && info.aggFunctions.map(A=>(
-                        <AggFunction key={A.aggFuncName} measureInfo={{"measureName": info.measureName,"measurePrefixName":measureName}} info={A}/>
+                        <AggFunction key={A.aggFuncName} measureInfo={{"measureName": info.measureName,"measurePrefixName":measureName, "range":info.range.rangeName}} info={A}/>
                     ))
                     
                 }

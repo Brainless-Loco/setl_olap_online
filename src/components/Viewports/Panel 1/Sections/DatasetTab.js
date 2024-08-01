@@ -144,7 +144,7 @@ const DatasetTab = ({}) => {
                     sx={{width:'100%',height:'40px'}}
                     label='Dataset'
                     value={dataset}
-                    onChange={(e)=>dispatch(update_dataset(e.target.value))}>
+                    onChange={(e)=>dispatch(update_dataset(e.target.value,prefixes))}>
 
                     {datasetList.map((item, idx) => (
                         <MenuItem key={`dataset_${idx}`} value={item}>{item}</MenuItem>

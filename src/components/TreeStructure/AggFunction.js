@@ -45,24 +45,23 @@ export default function AggFunction({info, measureInfo}) {
                 const newAggFunctions = measure.aggFunctions.filter(aggFunc => {
                     if (aggFunc.prefixName === aggFuncName) {
                         aggFuncFound = true;
-                        return false; // Remove the existing aggFunc
+                        return false;
                     }
-                    return true; // Keep other aggFuncs
+                    return true;
                 });
                 if (!aggFuncFound) {
-                    // If aggFunc not found, add the new aggFunc
                     newAggFunctions.push({ "aggFuncName": info.aggFuncName, "prefixName": aggFuncName });
                 }
                 return { ...measure, aggFunctions: newAggFunctions };
             }
             return measure;
-        }).filter(m => m.aggFunctions.length > 0); // Remove the measure if it has no aggFunctions
+        }).filter(m => m.aggFunctions.length > 0);
 
         if (!measureFound) {
-            // If measure not found, add the new measure with the aggFunc
             updatedMeasures.push({
                 measureName,
                 measurePrefixName,
+                range:measureInfo.range,
                 aggFunctions: [{ "aggFuncName": info.aggFuncName, "prefixName": aggFuncName }]
             });
         }
@@ -72,6 +71,7 @@ export default function AggFunction({info, measureInfo}) {
     useEffect(() => {
         if(info && info.aggFuncName.length>0) update_aggFunc_name_prefix()
       }, [info])
+
 
     return (
         <Box onClick={update_agg_function_selection} className="flex w-full flex-wrap justify-between cursor-pointer">

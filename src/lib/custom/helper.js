@@ -20,6 +20,7 @@ export const tryToAddLevel = (levelInfo, selectedLevels) => {
       const newLevel = {
         levelName: levelInfo.levelName,
         prefixName: levelInfo.prefixName,
+        rollupSerials: levelInfo.rollupSerials,
         attributesToBeViewed: [],
         selectedInstances: []
       };
@@ -75,4 +76,10 @@ export const updateSelectedInstances = (levelName, attribute, instances, selecte
     return level;
   });
   return updatedLevels;
+}
+
+export const getFullIRIFromPrefix = (prefix, prefixes) =>{
+    const splittedPrefix = prefix.split(':')
+    var fulIRI = prefixes[splittedPrefix[0]]+'#'+splittedPrefix[1]
+    return fulIRI
 }

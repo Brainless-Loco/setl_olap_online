@@ -3,11 +3,14 @@ import Box from '@mui/material/Box'
 import { useSelector } from 'react-redux'
 import CodeIcon from '@mui/icons-material/Code';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CodeModal from '../GeneratedSparqlCode/CodeModal';
 
 export default function ActionButtonGroup() {
 
     const selectedMeasuresLength = useSelector((state)=>state.queryReducer.selectedMeasures.length)
     const  selectedLevelsLength = useSelector((state)=>state.queryReducer.selectedLevels.length)
+
+
 
     return (
         <Box className='w-full min-h-20 flex justify-center items-center'>
@@ -27,6 +30,9 @@ export default function ActionButtonGroup() {
                 variant="outlined">
                 Execute Query
             </Button>
+            {
+                selectedLevelsLength>0 && selectedMeasuresLength>0 && <CodeModal/>
+            }
         </Box>
     )
 }

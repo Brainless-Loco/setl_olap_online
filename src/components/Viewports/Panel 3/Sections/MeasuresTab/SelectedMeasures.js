@@ -8,6 +8,7 @@ export default function SelectedMeasures() {
 
     const selected_measures = useSelector((state) => state.queryReducer.selectedMeasures);
 
+
     return (
         <Card className="w-full border-2 rounded p-2">
             <Typography className="p-0 pb-1 text-xl font-medium font-sans" sx={{color:'#08094f'}}>Measures</Typography>
