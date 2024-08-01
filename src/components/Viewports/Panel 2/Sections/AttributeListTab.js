@@ -146,10 +146,10 @@ export default function AttributeListTab() {
             <Typography sx={{color:'#08094f',fontSize:'14px'}}>
                 Selected level: <b>{selectedLevelData && levelName.length>0 && levelName}</b>
             </Typography>
-            <FormControl fullWidth sx={{ marginTop: '5px' }}>
-                <InputLabel id='level-attribute-label' sx={{fontSize:'90%',top:'-10%'}}>Attributes</InputLabel>
+            <FormControl fullWidth sx={{ marginTop: '8px' }}>
+                <InputLabel id='level-attribute-label'>Attributes</InputLabel>
                 <Select
-                    labelId="level-attribute-select"
+                    labelId="level-attribute-label"
                     sx={{width:'100%',height:'40px'}}
                     label='Level Attribute'
                     disabled={!(selectedLevelData.levelName)}

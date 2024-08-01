@@ -12,7 +12,7 @@ const Viewport1 = ({}) => {
 
     return (
         <Card className='w-4/12 flex-1'>
-            <CardHeader className="py-3" title='Structure Extraction' sx={{color:'#08094f'}}/>
+            <CardHeader className="pt-3 pb-2" title='Structure Extraction' sx={{color:'#08094f'}}/>
             <CardContent sx={{maxHeight:'110vh'}} className="py-0 flex flex-wrap flex-row w-full overflow-y-auto">
                 <Box className="h-auto py-0 my-0 overflow-auto w-full">
                     <FileListTab/>

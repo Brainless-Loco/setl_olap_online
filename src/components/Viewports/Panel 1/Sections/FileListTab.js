@@ -75,9 +75,9 @@ const FileListTab = ({}) => {
     
 
     return (
-        <Box className="flex justify-center flex-col flex-wrap gap-3">
+        <Box className="flex justify-center flex-col flex-wrap gap-3 mt-2">
             <FormControl fullWidth>
-                <InputLabel id='tbox-select' sx={{fontSize:'12px'}}>TBox IRI</InputLabel>
+                <InputLabel id='tbox-select'>TBox IRI</InputLabel>
                 <Select
                     labelId="tbox-select"
                     sx={{ height:'40px'}}
@@ -92,7 +92,7 @@ const FileListTab = ({}) => {
             </FormControl>
 
             <FormControl fullWidth>
-                <InputLabel id='abox-select' sx={{fontSize:'12px'}}>ABox IRI</InputLabel>
+                <InputLabel id='abox-select'>ABox IRI</InputLabel>
                 <Select
                     labelId="abox-select"
                     sx={{height:'40px' }}

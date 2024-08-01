@@ -29,13 +29,14 @@ export default function ALevel({info}) {
         if(info.selectedInstances.length>0 && selectedAttribute===''){
             setselectedAttribute(info.selectedInstances[0].prefixIRI)
         }
-        if(selectedAttribute.length>0){
+        if(info.selectedInstances.length>0 && selectedAttribute.length>0){
             info.selectedInstances.forEach(attr => {
                 if(attr.prefixIRI === selectedAttribute){
                     setAttributeValues(attr.instances)
                 }
             })
         }
+        if(info.selectedInstances.length == 0) setselectedAttribute('')
     }, [info])
     
     
@@ -72,7 +73,7 @@ export default function ALevel({info}) {
                 <Box sx={{maxHeight:'25vh'}} className="w-full pb-3 overflow-auto">
                     {/* Filtering Values of the corresponding Attribute */}
                     {
-                        selectedAttribute.length > 0 && attributeValues.length>0 &&
+                        info.selectedInstances.length>0 && selectedAttribute.length > 0 && attributeValues.length>0 &&
                                 attributeValues.map((instance,id) => (
                                     <Typography key={id} className="pl-3 pt-1 text-sm">
                                     <RadioButtonCheckedIcon className="mr-1 text-sm" />
