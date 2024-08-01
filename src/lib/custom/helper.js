@@ -28,4 +28,51 @@ export const tryToAddLevel = (levelInfo, selectedLevels) => {
     }
   
     return selectedLevels;
-  };
+};
+
+export const removeLevel = (levelName, selectedLevels) => {
+  return  selectedLevels.filter(level => level.levelName !== levelName)
+};
+
+export const updateAttributeToBeViewList = (attributeList, levelName, selectedLevels) => {
+  const updatedLevels = selectedLevels.map(level => {
+    if (level.levelName === levelName) {
+      return {
+        ...level,
+        attributesToBeViewed: attributeList
+      };
+    }
+    return level;
+  });
+  return updatedLevels;
+}
+
+export const updateSelectedInstances = (levelName, attribute, instances, selectedLevels) => {
+  const updatedLevels = selectedLevels.map(level => {
+    if (level.levelName === levelName) {
+      const updatedInstances = level.selectedInstances.map(attr => {
+        if (attr.prefixIRI === attribute.prefixIRI) {
+          return {
+            "prefixIRI": attr.prefixIRI,
+            "originalIRI": attr.originalIRI,
+            instances
+          };
+        }
+        return attr;
+      });
+      const attributeExists = updatedInstances.some(attr => attr.prefixIRI === attribute.prefixIRI);
+      if (!attributeExists) {
+        updatedInstances.push({
+          ...attribute,
+          instances
+        });
+      }
+      return {
+        ...level,
+        selectedInstances: updatedInstances.filter(attr=>attr.instances.length>0)
+      };
+    }
+    return level;
+  });
+  return updatedLevels;
+}

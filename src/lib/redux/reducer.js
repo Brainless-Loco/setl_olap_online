@@ -1,5 +1,5 @@
-import { remove_agg_func, tryToAddLevel } from "../custom/helper";
-import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, TRY_TO_ADD_LEVEL, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX } from "./type";
+import { remove_agg_func, removeLevel, tryToAddLevel, updateAttributeToBeViewList, updateSelectedInstances } from "../custom/helper";
+import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, CLEAR_FOR_DATASET_CHANGE, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_LEVEL, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, TRY_TO_ADD_LEVEL, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST, UPDATE_LEVEL_INSTANCES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX } from "./type";
 
 
 const datasetInitialState = {
@@ -66,7 +66,11 @@ const datasetReducer = (state = datasetInitialState, action) => {
                 ...state,
                 allLevelData: {...state.allLevelData, [action.levelName]:action.newLevelData}
             }
-
+        case CLEAR_FOR_DATASET_CHANGE:
+            return{
+                ...state,
+                selectedLevelData:{}
+            }
 
         default:
             return state;
@@ -75,6 +79,15 @@ const datasetReducer = (state = datasetInitialState, action) => {
 
 const queryReducer = (state=selectionForQueryState,action)=> {
     switch (action.type) {
+        // Common
+        
+        case CLEAR_FOR_DATASET_CHANGE:
+            return{
+                ...state,
+                selectedLevelData: [],
+                selectedMeasures: []
+            }
+
         // Measure Works
         case UPDATE_SELECTED_MEASURE_LIST:
             return{
@@ -99,8 +112,21 @@ const queryReducer = (state=selectionForQueryState,action)=> {
                 ...state,
                 selectedLevels: tryToAddLevel(action.levelInfo, state.selectedLevels)
             }
-        
-
+        case REMOVE_LEVEL:
+            return{
+                ...state,
+                selectedLevels: removeLevel(action.levelName, state.selectedLevels)
+            }
+        case UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST:
+            return{
+                ...state,
+                selectedLevels: updateAttributeToBeViewList(action.attributeList, action.levelName, state.selectedLevels)
+            }
+        case UPDATE_LEVEL_INSTANCES:
+            return{
+                ...state,
+                selectedLevels: updateSelectedInstances(action.levelName, action.attribute, action.instances, state.selectedLevels)
+            }
         
         default:
             return state;
@@ -117,8 +143,45 @@ export default rootReducer;
 
 
 
+
+
+
+// Samples
+
+
 /*
-queryReducer.selectedMeasures: [
+datasetInitialState.selectedLevelData = {
+    levelName: "",
+    attributes:[
+        {
+            attributeName:"",
+            prefixIRI:"",
+            attributeValues:[
+                {
+                    type: 'literal', 
+                    value: '1'
+                },
+                {
+                    type: 'uri',
+                    value:'namespace.com/something' 
+                }
+            ]
+        }
+    ]
+}
+
+
+*/
+
+
+
+
+
+
+// Query Selection
+
+/*
+selectionForQueryState.selectedMeasures: [
     {
         measureName: "namespace.com/Country",
         measurePrefixName: "mdProperty:Country",
@@ -126,4 +189,32 @@ queryReducer.selectedMeasures: [
             { aggFuncName: "namespace.com/avg", prefixName: "qb4o:avg" }
         ]
     }...
+*/
+
+
+/*
+selectionForQueryState.selectedLevels: [
+    {
+        "levelName": "",
+        "prefixName": "",
+        "attributesToBeViewed": [
+            {
+                "attributeName": "",
+                "prefixName": ""
+            }
+        ],
+        "selectedInstances": [
+            {
+                "attributeName": "",
+                prefixIRI:"",
+                "instances": [
+                    {
+                        "type": "",
+                        "value": ""
+                    }
+                ]
+            }
+        ]
+    }
+]
 */

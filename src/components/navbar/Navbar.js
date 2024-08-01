@@ -7,21 +7,19 @@ import Link from 'next/link'
 const Navbar = () => {
     return (
         <AppBar position='static' sx={{height:'40px',overflow:'hidden',backgroundColor:'#08094f'}}>
-            <Container maxWidth='xl' sx={{display:'flex',justifyContent:'center',alignItems:'center',backgroundColor:'#08094f',height:'100%',width:'100%'}}>
+            <Container maxWidth='xl' className='flex justify-center items-center h-full w-full' sx={{backgroundColor:'#08094f'}}>
                 <Toolbar disableGutters sx={{cursor:'pointer'}}>
                     <Typography 
                     variant='body1'
+                    className='text-center italic  font-semibold'
                     sx={{
-                        textAlign: 'center',
-                        fontStyle: 'italic',
                         fontSize: '1.5rem',
-                        fontWeight: '700',
                         color: '#28ecfa',
                         width: {xs: '100%', sm: '100%', md: '100%', lg: 'auto', xl: 'auto'},
                         p: '4px'
                     }}
                     noWrap>
-                        <Link href='/'><>SETL<sub> OLAP</sub></> <span style={{fontStyle:'normal'}}>| BIKE </span></Link>
+                        <Link href='/'><>SETL<sub> OLAP</sub></> <span className='font-normal'>| BIKE </span></Link>
                     </Typography>
                 </Toolbar>
             </Container>

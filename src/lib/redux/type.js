@@ -1,6 +1,10 @@
 // I define all the Action Types here //
 // =================================== //
 
+// Common 
+
+export const CLEAR_FOR_DATASET_CHANGE = 'CLEAR_FOR_DATASET_CHANGE';
+
 
 // For Dataset Reducer
 

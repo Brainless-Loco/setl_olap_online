@@ -1,4 +1,4 @@
-import { add_to_prefix_list, update_selected_level_data } from '@/lib/redux/action'
+import { add_to_prefix_list, update_level_attribute_to_view_list, update_level_instances, update_selected_level_data } from '@/lib/redux/action'
 import Box from '@mui/material/Box'
 import FormControl from "@mui/material/FormControl"
 import InputLabel from '@mui/material/InputLabel'
@@ -18,7 +18,6 @@ export default function AttributeListTab() {
     const [levelName, setLevelName] = useState('')
     const [selectedAttribute, setSelectedAttribute] = useState({originalIRI:'',prefixIRI:''})
     const [selectedToBeViewedAttribute, setSelectedToBeViewedAttribute] = useState('')
-    const [selectedInstances, setSelectedInstances] = useState([])
 
     const [rows, setRows] = useState([])
     
@@ -86,7 +85,22 @@ export default function AttributeListTab() {
         const attributeIRIs = e.target.value;
 
         setSelectedToBeViewedAttribute(attributeIRIs.join(","))
-      };
+    };
+
+    const handleUpdateFilteringInstances = (ids)=>{
+        var selectedInstances = []
+        selectedLevelData.attributes.map((a)=>{
+            if(a.prefixIRI===selectedAttribute.prefixIRI){
+                a.attributeValues.map((val,idx)=>{
+                    if(ids.includes(idx)==true) selectedInstances.push(val)
+                })
+            }
+        })
+        dispatch(update_level_instances(selectedLevelData.levelName, selectedAttribute, selectedInstances))
+    }
+    
+    
+    const renderValue = (selected) => selected.join(', ');
 
     useEffect(() => {
       if(selectedLevelData && selectedLevelData.levelName){ 
@@ -110,11 +124,22 @@ export default function AttributeListTab() {
             })
             setRows(tempRows)
         }
+        
     }, [selectedAttribute])
 
-
-    const renderValue = (selected) => selected.join(', ');
-
+    useEffect(()=>{
+        if(selectedToBeViewedAttribute.length>0){
+            var updatedAttrToBeViewed = []
+            selectedToBeViewedAttribute.split(',').map((a,id) => {
+                const [baseURI, attrName] = a.split(':')
+                updatedAttrToBeViewed.push({
+                    "attributeName": prefixes[baseURI] +"#"+attrName,
+                    "prefixName": a
+                })
+            })
+            dispatch(update_level_attribute_to_view_list(selectedLevelData.levelName,updatedAttrToBeViewed))
+        }
+    },[selectedToBeViewedAttribute])
 
     return (
         <Box className="w-full">
@@ -192,6 +217,7 @@ export default function AttributeListTab() {
                 <DataGrid 
                     rows={rows}
                     columns={col}
+                    onRowSelectionModelChange={(e)=>{handleUpdateFilteringInstances(e)}}
                     checkboxSelection
                 />
             </Box>

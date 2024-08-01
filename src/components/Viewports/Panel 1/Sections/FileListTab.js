@@ -32,7 +32,6 @@ const FileListTab = ({}) => {
         else{
             console.log("couldn't fetch the graphs...")
         }
-        console.log("Already called the function")
     }
 
     const getDatasetList = async()=>{
@@ -73,8 +72,6 @@ const FileListTab = ({}) => {
     useEffect(() => {
         getGraphList();
     }, [])
-
-    console.log(selectedLevels)
     
 
     return (
@@ -109,12 +106,12 @@ const FileListTab = ({}) => {
                 </Select>
             </FormControl>
             <Box hidden={tbox.length>0 && abox.length>0}>
-                <Typography sx={{color:'#08094f',fontSize:'12px',fontWeight:'bold',textAlign:'center'}}> 
+                <Typography className="font-bold text-center text-xs" sx={{color:'#08094f'}}> 
                     Select a TBox and an ABox to extract dataset(s).
                 </Typography>
             </Box>
             
-            <Button className="mb-4" fullWidth variant='contained' 
+            <Button sx={{backgroundColor:'#08094f'}} className="mb-4" fullWidth variant='contained' 
             onClick={() => getDatasetList()} type="button" 
             disabled={!tbox.length || !abox.length} >
                 {loading? <CircularProgress size={25} color="inherit"/>:"Extract Datasets"}

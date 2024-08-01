@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Dimension from "@/components/TreeStructure/Dimension"
 import { useDispatch, useSelector } from "react-redux"
-import { add_to_prefix_list, update_dataset, update_dimension_tree, update_measure_list } from "@/lib/redux/action"
+import { add_to_prefix_list, clear_for_dataset_change, update_dataset, update_dimension_tree, update_measure_list } from "@/lib/redux/action"
 import { CircularProgress } from "@mui/material"
 import Measure from "@/components/TreeStructure/Measure"
 import { Troubleshoot } from "@mui/icons-material"
@@ -130,6 +130,7 @@ const DatasetTab = ({}) => {
             getMetaDataOfDataset()
             getTreeStructure()
             getMeasureList()
+            dispatch(clear_for_dataset_change())
         }
     }, [dataset])
 
