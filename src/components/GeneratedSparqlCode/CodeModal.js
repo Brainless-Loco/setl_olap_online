@@ -1,49 +1,29 @@
-import { useEffect, useState } from "react";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import GenerateQuery from "@/lib/custom/GenerateQuery";
+import Editor from '@monaco-editor/react';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useEffect } from 'react';
 
-import { useSelector } from "react-redux"
+export default function CodeModal({loading, open, setOpen, query}) {  
 
-export default function CodeModal() {
-    const everyThingForQuery = useSelector(state=>state.queryReducer)
-
-    
-    
-    const [codeModalOpen, setCodeModalOpen] = useState(true);
-    
-
-    useEffect(() => {
-        
-        if(everyThingForQuery.selectedLevels !== {} >0 &&
-            everyThingForQuery.selectedMeasures.length>0)
-        {
-            // console.log(GenerateQuery(everyThingForQuery))
-            GenerateQuery(everyThingForQuery)
-        }
-    }, [everyThingForQuery])
-    
-    
     return (
         <Dialog
-            open={codeModalOpen}
-            onClose={()=>{setCodeModalOpen(!codeModalOpen);}}
-            aria-labelledby="draggable-dialog-title"
-        >
-            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">Subscribe</DialogTitle>
-                <DialogContent>
-                <DialogContentText>
-                    To subscribe to this website, please enter your email address here. We
-                    will send updates occasionally.
-                </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                <Button autoFocus onClick={()=>{setCodeModalOpen(!codeModalOpen);}}>
-                    Cancel
+            open={open}
+            onClose={()=>{setOpen(!open);}}
+            fullWidth={true}
+            maxWidth={false}
+            fullScreen={true} className='m-2'>
+            <DialogTitle className='font-semibold my-0 py-2 text-blue-900'>Query</DialogTitle>
+                {
+                    loading? 
+                    <CircularProgress className='m-auto'/>  :
+                    <Editor height="82%" width="100%" defaultLanguage="sparql" onChange={(e,v)=>{console.log(v)}} defaultValue="# Your SPARQL query will arrive soon..." value={query} options={{bracketPairColorization:true,readOnly:true, theme:'light'}}/>
+                }              
+            <DialogActions>
+                <Button sx={{ border:'2px solid gray','&:hover': {color: 'gray'}}} className='bg-gray-600 border-2 text-white font-semibold' onClick={()=>{setOpen(!open);}}>
+                    Close
                 </Button>
             </DialogActions>
         </Dialog>

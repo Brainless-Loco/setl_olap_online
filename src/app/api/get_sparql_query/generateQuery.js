@@ -1,18 +1,21 @@
 
-export default function GenerateQuery(everyThingForQuery) {
+export default function generateQuery(everyThingForQuery) {
     
     const {selectedMeasures, selectedLevels, selectedDataset, abox, tbox} = everyThingForQuery
 
-    let prefixes = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-                 + "PREFIX qb: <http://purl.org/linked-data/cube#>\n"
-                 + "PREFIX qb4o: <http://purl.org/qb4olap/cubes#>\n\n";
+    let prefixes = `PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX qb: <http://purl.org/linked-data/cube#>
+PREFIX qb4o: <http://purl.org/qb4olap/cubes#>`;
 
-    let selectClause =  "SELECT "
-    let groupByClause = "GROUP BY "
-    let orderByClause = "ORDER BY "
+    let selectClause =  `
+SELECT `
+    let groupByClause = `
+GROUP BY `
+    let orderByClause = `
+ORDER BY `
     let whereClause = "WHERE {\n"
-                    + `\t?o a qb:Observation . \n`
-                    + `\t?o qb:dataSet <${selectedDataset}> .\n`;
+                    + `\t\t?o a qb:Observation . \n`
+                    + `\t\t?o qb:dataSet <${selectedDataset}> .\n`;
     let filterClause = "";
 
 
@@ -30,14 +33,14 @@ export default function GenerateQuery(everyThingForQuery) {
             if(highestLevelFound == false){
                 if (index === 0) {
                     // Cuboid level
-                    whereClause += `\n\t?o <${level.name}> ?${levelVar} .\n`;
+                    whereClause += `\n\t\t?o <${level.name}> ?${levelVar} .\n`;
                 }
                 if(levels[0].levelName === level.name) highestLevelFound = true
                 else{
                     // Higher levels
                     const parentVar = getVarName(level.parentLevel);
-                    whereClause += `\t?${levelVar} qb4o:memberOf <${level.name}> .\n`;
-                    whereClause += `\t?${levelVar} <${level.rollupRelation}> ?${parentVar} .\n`;
+                    whereClause += `\t\t?${levelVar} qb4o:memberOf <${level.name}> .\n`;
+                    whereClause += `\t\t?${levelVar} <${level.rollupRelation}> ?${parentVar} .\n`;
                 }
             }
           });
@@ -50,7 +53,7 @@ export default function GenerateQuery(everyThingForQuery) {
             // Attributes to be viewed
             level.attributesToBeViewed.forEach(attr => {
                 const attrVar = getVarName(attr.attributeName);
-                whereClause += `\t?${levelVar} <${attr.attributeName}> ?${attrVar} .\n`;
+                whereClause += `\t\t?${levelVar} <${attr.attributeName}> ?${attrVar} .\n`;
                 selectClause += `?${attrVar} `;
                 groupByClause += `?${attrVar} `;
                 orderByClause += `?${attrVar} `;
@@ -60,7 +63,7 @@ export default function GenerateQuery(everyThingForQuery) {
             
             // Selected instances
             if (level.selectedInstances.length > 0) {
-                filterClause += '\tFILTER (';
+                filterClause += '\tFILTER ( ';
                 level.selectedInstances.forEach((attr, idx) => {
                 const attrVarForInstances = getVarName(attr.originalIRI);
                 if (!addedAttributes.has(attrVarForInstances)) {
@@ -94,7 +97,7 @@ export default function GenerateQuery(everyThingForQuery) {
             const aggFunctionName = aggFunc.prefixName.split(':')[1]
             selectClause += `${aggFunctionName}(<${measure.range}>(?${measureVar})) as ?${aggFunctionName+'_'+ measureVar} `;
             if(idx2==0){
-                whereClause += `\n\t?o <${measure.measureName}> ?${measureVar} .\n`;
+                whereClause += `\n\t\t?o <${measure.measureName}> ?${measureVar} .\n`;
             }
         })
     });
@@ -106,19 +109,18 @@ export default function GenerateQuery(everyThingForQuery) {
     // Closing WHERE clause
     whereClause += '\n}\n';
 
-    const query = `
-        ${prefixes}
-        ${selectClause}
-        FROM <${abox}>
-        FROM <${tbox}>
-        ${whereClause}
-        ${groupByClause}
-        ${orderByClause}
+    const query =
+`${prefixes}
+${selectClause}
+
+FROM <${abox}>
+FROM <${tbox}>
+
+${whereClause}
+${groupByClause}
+${orderByClause}
     `;
 
-
-    console.log(query)
-    
     return query
 }
 
