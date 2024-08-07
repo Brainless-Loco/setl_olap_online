@@ -4,7 +4,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import Editor from '@monaco-editor/react';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useEffect } from 'react';
 
 export default function CodeModal({loading, open, setOpen, query}) {  
 

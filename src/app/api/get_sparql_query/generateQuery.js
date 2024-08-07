@@ -104,7 +104,7 @@ ORDER BY `
 
 
     // Adding filter clause
-    whereClause += `${filterClause}`;
+    whereClause += `\n${filterClause}`;
     
     // Closing WHERE clause
     whereClause += '\n}\n';
