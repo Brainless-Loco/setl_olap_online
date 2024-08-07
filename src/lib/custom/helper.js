@@ -1,3 +1,8 @@
+const deepCopy = (obj) => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
+
 export const remove_agg_func = (selectedMeasures, measureName, aggFuncName)=>{
     var tempMeasures = selectedMeasures.map(measure => {
         if (measure.measureName === measureName) {
@@ -12,74 +17,140 @@ export const remove_agg_func = (selectedMeasures, measureName, aggFuncName)=>{
     return tempMeasures.filter(measure => measure !== null);
 }
 
-export const tryToAddLevel = (levelInfo, selectedLevels) => {
-    const levelExists = selectedLevels.some(l => l.levelName === levelInfo.levelName);
-  
-    if (!levelExists) {
+export const tryToAddLevel = (levelInfo, selectedData) => {
+  const { levelName, prefixName, inDimension, rollupSerial, inHierarchy } = levelInfo;
+
+  // Create a deep copy of the selectedData to avoid mutation
+  const newSelectedData = { ...selectedData };
+
+  // Check if the dimension exists
+  if (!newSelectedData[inDimension]) {
+      newSelectedData[inDimension] = {
+          dimensionName: inDimension,
+          rollupSerial,
+          selectedHierarchy: inHierarchy,
+          selectedLevels: []
+      };
+  } else {
+      // Create a new copy of the dimension to avoid mutation
+      newSelectedData[inDimension] = { ...newSelectedData[inDimension] };
+      // Make sure selectedLevels is also a new array
+      newSelectedData[inDimension].selectedLevels = [...newSelectedData[inDimension].selectedLevels];
+  }
+
+  const selectedLevels = newSelectedData[inDimension].selectedLevels;
+
+  // Check if the level already exists in the selected levels
+  const levelExists = selectedLevels.some(l => l.levelName === levelName);
+
+  if (!levelExists) {
       // If not present, add the level with the blank template
       const newLevel = {
-        levelName: levelInfo.levelName,
-        prefixName: levelInfo.prefixName,
-        rollupSerials: levelInfo.rollupSerials,
-        attributesToBeViewed: [],
-        selectedInstances: []
+          levelName,
+          prefixName,
+          attributesToBeViewed: [],
+          selectedInstances: []
       };
-  
-      return [...selectedLevels, newLevel];
-    }
-  
-    return selectedLevels;
+
+      // Create a new array to avoid mutation
+      selectedLevels.push(newLevel);
+
+      // Update the dimension with the new selected levels
+      newSelectedData[inDimension].selectedLevels = selectedLevels;
+  }
+
+  return newSelectedData;
 };
 
-export const removeLevel = (levelName, selectedLevels) => {
-  return  selectedLevels.filter(level => level.levelName !== levelName)
-};
 
-export const updateAttributeToBeViewList = (attributeList, levelName, selectedLevels) => {
-  const updatedLevels = selectedLevels.map(level => {
-    if (level.levelName === levelName) {
-      return {
-        ...level,
-        attributesToBeViewed: attributeList
-      };
-    }
-    return level;
+
+export const removeLevel = (levelName, selectedData) => {
+  // Create a deep copy of the selectedData to avoid mutation
+  const newSelectedData = deepCopy(selectedData);
+
+  // Iterate over each dimension in newSelectedData
+  Object.keys(newSelectedData).forEach(dimensionIRI => {
+    // Filter out the level from the selectedLevels array for the current dimension
+    newSelectedData[dimensionIRI].selectedLevels = newSelectedData[dimensionIRI].selectedLevels.filter(level => level.levelName !== levelName);
   });
-  return updatedLevels;
-}
 
-export const updateSelectedInstances = (levelName, attribute, instances, selectedLevels) => {
-  const updatedLevels = selectedLevels.map(level => {
-    if (level.levelName === levelName) {
-      const updatedInstances = level.selectedInstances.map(attr => {
-        if (attr.prefixIRI === attribute.prefixIRI) {
-          return {
-            "prefixIRI": attr.prefixIRI,
-            "originalIRI": attr.originalIRI,
-            instances
-          };
-        }
-        return attr;
-      });
-      const attributeExists = updatedInstances.some(attr => attr.prefixIRI === attribute.prefixIRI);
-      if (!attributeExists) {
-        updatedInstances.push({
-          ...attribute,
-          instances
-        });
+  return newSelectedData;
+};
+
+export const updateAttributeToBeViewList = (attributeList, levelName, selectedData) => {
+  // Create a new copy of the selectedData to avoid mutation
+  const newSelectedData = Object.keys(selectedData).reduce((acc, dimensionIRI) => {
+    // Create a copy of the selectedLevels array for the current dimension
+    const updatedSelectedLevels = selectedData[dimensionIRI].selectedLevels.map(level => {
+      if (level.levelName === levelName) {
+        return {
+          ...level,
+          attributesToBeViewed: attributeList
+        };
       }
-      return {
-        ...level,
-        selectedInstances: updatedInstances.filter(attr=>attr.instances.length>0)
-      };
-    }
-    return level;
+      return level;
+    });
+
+    // Create a copy of the current dimension object with the updated selectedLevels
+    acc[dimensionIRI] = {
+      ...selectedData[dimensionIRI],
+      selectedLevels: updatedSelectedLevels
+    };
+
+    return acc;
+  }, {});
+
+  return newSelectedData;
+};
+
+
+export const updateSelectedInstances = (levelName, attribute, instances, selectedData) => {
+  // Create a deep copy of the selectedData to avoid mutation
+  const newSelectedData = deepCopy(selectedData);
+
+  // Iterate over each dimension in newSelectedData
+  Object.keys(newSelectedData).forEach(dimensionIRI => {
+    // Iterate over the selected levels within each dimension
+    newSelectedData[dimensionIRI].selectedLevels = newSelectedData[dimensionIRI].selectedLevels.map(level => {
+      if (level.levelName === levelName) {
+        // Update the selectedInstances for the matching attribute within the level
+        const updatedInstances = level.selectedInstances.map(attr => {
+          if (attr.prefixIRI === attribute.prefixIRI) {
+            return {
+              prefixIRI: attr.prefixIRI,
+              originalIRI: attr.originalIRI,
+              instances
+            };
+          }
+          return attr;
+        });
+
+        // Check if the attribute already exists, if not, add it
+        const attributeExists = updatedInstances.some(attr => attr.prefixIRI === attribute.prefixIRI);
+        if (!attributeExists) {
+          updatedInstances.push({
+            ...attribute,
+            instances
+          });
+        }
+
+        return {
+          ...level,
+          selectedInstances: updatedInstances.filter(attr => attr.instances.length > 0)
+        };
+      }
+      return level;
+    });
   });
-  return updatedLevels;
-}
+
+  return newSelectedData;
+};
+
+
 
 export const getFullIRIFromPrefix = (prefix, prefixes) =>{
     const splittedPrefix = prefix.split(':')
     var fulIRI = prefixes[splittedPrefix[0]]+'#'+splittedPrefix[1]
     return fulIRI
 }
+

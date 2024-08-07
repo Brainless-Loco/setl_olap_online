@@ -78,7 +78,7 @@ const selectionForQueryState = {
     tbox:'',
     abox: '',
     selectedDataset:'',
-    selectedLevels:[],
+    selectedLevels:{},
     selectedMeasures:[]
 }
 

@@ -3,7 +3,7 @@ import Box from "@mui/material/Box"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function Level({info}) {
+export default function Level({info,rollupSerial}) {
 
     const dispatch = useDispatch()
 
@@ -50,12 +50,13 @@ export default function Level({info}) {
         else{
             console.log("couldn't fetch the tree structure...")
         }
-        dispatch(try_to_add_level({levelName:info.name, prefixName:levelName,inDimension:info.inDimension,rollUpSerial:info.rollUpSerial}))
+        dispatch(try_to_add_level({levelName:info.name, prefixName:levelName,inDimension:info.inDimension,inHierarchy:info.inHierarchy, rollupSerial}))
     }
 
     useEffect(() => {
         if(info && info.name.length>0) update_level_name_prefix()
-      }, [info])
+    }, [info])
+    
 
     return (
         <Box onClick={()=>{selectThisLevel()}}>

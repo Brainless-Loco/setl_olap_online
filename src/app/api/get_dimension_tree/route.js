@@ -11,44 +11,45 @@ export async function POST (request=Request) {
     const sparql = `
 prefix qb: <http://purl.org/linked-data/cube#>
 prefix qb4o: <http://purl.org/qb4olap/cubes#>
-prefix cdw: <http://bike-csecu.com/datasets/covid/cdw#>
-prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-prefix covProperty: <http://bike-csecu.com/datasets/covid/cdw/covProperty#>\n`
-    +  `SELECT DISTINCT(?dimension) ?hierarchy ?parent ?rollupProperty ?child\n`
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n`
+    +  `SELECT DISTINCT ?dimension ?hierarchy ?parent ?rollupProperty ?child ?isCuboidLevel\n`
     +  `FROM <${tbox}>\n`
     // +  `FROM<${abox}>\n`
     +  `WHERE {\n`
     +  `\t<${dataset}> rdf:type qb:DataSet;\n`
     +  `\t\tqb:structure ?cuboid.\n`
+
     +  `\t?cuboid qb:component ?BNodeForCuboidLevel;\n`
     +  `\t\tqb4o:isCuboidOf ?cube.\n`
+
     +  `\t?BNodeForCuboidLevel qb4o:level ?cuboidLevel.\n`
+
     +  `\t?cuboidHierarchy qb4o:hasLevel ?cuboidLevel;\n`
-
     +  `\t\tqb4o:inDimension ?dimension.\n`
-    +  `\t?cube rdf:type qb:DataStructureDefinition;\n`
 
+    +  `\t?cube rdf:type qb:DataStructureDefinition;\n`
     +  `\t\tqb:component ?BNodeForDimension.\n`
+
     +  `\t?BNodeForDimension qb4o:dimension ?dimension.\n`
+
     +  `\t?dimension qb4o:hasHierarchy ?hierarchy.\n`
 
-    +  `\t?hierarchy qb4o:hasLevel ?parent;\n`
-    +  `\t\tqb4o:hasLevel ?child.\n`
-
-    +  `\t?hStep rdf:type qb4o:HierarchyStep;\n`
-    +  `\t\tqb4o:parentLevel ?parent;\n`
-    +  `\t\tqb4o:childLevel ?child;\n`
-    +  `\t\tqb4o:rollup ?rollupProperty.\n`
+    +  `\t?hierarchy qb4o:hasLevel ?child.\n`
+    +  `OPTIONAL {\n`
+    +  `\t\t?hierarchy qb4o:hasLevel ?parent.\n`
+    +  `\t\t?hStep rdf:type qb4o:HierarchyStep;\n`
+    +  `\t\t\tqb4o:parentLevel ?parent;\n`
+    +  `\t\t\tqb4o:childLevel ?child;\n`
+    +  `\t\t\tqb4o:rollup ?rollupProperty.\n`
+    +  `\t}\n`
+    +  `BIND(IF(?cuboidLevel = ?child, "yes", "no") AS ?isCuboidLevel)`
     +  `}\n`
     +  `ORDER BY ?dimension ?hierarchy ?parent`
     const result = await client.query(sparql)
     const data = result.data.results.bindings
 
-    // console.log(data)
-
     return NextResponse.json({treeStructure:mergeResults(data) });
 }
-
 
 const mergeResults = (data) => {
     const mergedData = {};
@@ -57,12 +58,16 @@ const mergeResults = (data) => {
     data.forEach(item => {
         const dimensionUrl = item.dimension.value;
         const hierarchyUrl = item.hierarchy.value;
+        const childLevel = item.child.value;
+        const parentLevel = item.parent ? item.parent.value : null;
+        const rollupProperty = item.rollupProperty ? item.rollupProperty.value : null;
+        const isCuboidLevel = item.isCuboidLevel.value === "yes";
 
         if (!mergedData[dimensionUrl]) {
-        mergedData[dimensionUrl] = {
-            name: dimensionUrl,
-            hierarchies: {}
-        };
+            mergedData[dimensionUrl] = {
+                name: dimensionUrl,
+                hierarchies: {}
+            };
         }
 
         if (!mergedData[dimensionUrl].hierarchies[hierarchyUrl]) {
@@ -72,19 +77,31 @@ const mergeResults = (data) => {
             };
         }
 
-        mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[item.child.value] = {
-            name: item.child.value,
-            parentLevel: item.parent.value,
-            rollupRelation: item.rollupProperty.value
-        };
+        if (!mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[childLevel]) {
+            mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[childLevel] = {
+                name: childLevel,
+                parentLevel: null,
+                rollupRelation: null,
+                isCuboid: false,
+                inDimension: dimensionUrl,
+                inHierarchy: hierarchyUrl
+            };
+        }
+
+        mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[childLevel].parentLevel = parentLevel;
+        mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[childLevel].rollupRelation = rollupProperty;
+        mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[childLevel].isCuboid = isCuboidLevel;
 
         // Also add the parent level if not already added (to ensure all levels are present)
-        if (!mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[item.parent.value]) {
-        mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[item.parent.value] = {
-            name: item.parent.value,
-            parentLevel: null, // Parent level's parent is not known at this point
-            rollupRelation: null
-        };
+        if (parentLevel && !mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[parentLevel]) {
+            mergedData[dimensionUrl].hierarchies[hierarchyUrl].levels[parentLevel] = {
+                name: parentLevel,
+                parentLevel: null,
+                rollupRelation: null,
+                isCuboid: false,
+                inDimension: dimensionUrl,
+                inHierarchy: hierarchyUrl
+            };
         }
     });
 
@@ -98,12 +115,12 @@ const mergeResults = (data) => {
             const parentMap = {};
             levels.forEach(level => {
                 if (level.parentLevel) {
-                parentMap[level.name] = level.parentLevel;
+                    parentMap[level.name] = level.parentLevel;
                 }
             });
 
             // Find the root levels (levels that are not a child of any other level)
-            const rootLevels = levels.filter(level => !Object.values(parentMap).includes(level.name));
+            const rootLevels = levels.filter(level => !Object.keys(parentMap).includes(level.name));
 
             // Sort levels starting from the root level
             let sortedLevels = [];
@@ -112,8 +129,6 @@ const mergeResults = (data) => {
             const addLevel = (level) => {
                 if (!visited.has(level.name)) {
                     visited.add(level.name);
-                    level.inHierarchy = hierarchy.name
-                    level.inDimension = dimension.name
                     sortedLevels.push(level);
                     const children = levels.filter(l => l.parentLevel === level.name);
                     children.forEach(addLevel);
@@ -121,31 +136,45 @@ const mergeResults = (data) => {
             };
 
             rootLevels.forEach(addLevel);
-            levels.forEach(addLevel);
 
-            sortedLevels = sortedLevels.map((l)=>{
-                return {...l, rollUpSerial:sortedLevels}
-            })
+            let cuboidIndex = -1;
+            sortedLevels.forEach((level, index) => {
+                if (level.isCuboid && cuboidIndex === -1) {
+                    cuboidIndex = index;
+                }
+            });
 
-            sortedLevels = sortedLevels.reverse()
+            if (cuboidIndex !== -1) {
+                sortedLevels = sortedLevels.slice(0, cuboidIndex + 1);
+            }
+            // Reverse sortedLevels once
+            const reversedSortedLevels = [...sortedLevels].reverse();
+
+            // Adding rollUpSerial to each level
+            // sortedLevels = sortedLevels.map((l) => {
+            //     return { ...l, rollUpSerial: reversedSortedLevels }
+            // });
 
             hierarchy.levels = sortedLevels;
-
+            hierarchy.rollUpSerial = reversedSortedLevels
         });
     });
 
     // Convert mergedData to the desired structure
     const result = {
-        dimension: Object.values(mergedData).map(dimension => ({
+        dimensions: Object.values(mergedData).map(dimension => ({
             name: dimension.name,
             hierarchies: Object.values(dimension.hierarchies).map(hierarchy => ({
                 name: hierarchy.name,
                 levels: hierarchy.levels,
+                rollUpSerial: hierarchy.rollUpSerial,
                 inDimension: dimension.name
             }))
         }))
     };
-    return result
-}
+
+    return result;
+};
+
 
 // export default handler;

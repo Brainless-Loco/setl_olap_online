@@ -9,22 +9,24 @@ datasetInitialState.treeStructures:{
                 {
                     name:"hierarchyIRI",
                     inDimension: dimension.name,
-                    levels: [
-                        {
-                            inDimension:"dimensionIRI",
-                            inHierarchy:"hierarchyIRI",
-                            name:"levelIRI",
-                            parentLevel:"levelIRI",
-                            rollupRelation:"rollupRelationIRI", //could be null
-                            rollUpSerial: [
+                    rollUpSerial: [ //Basically the same array named levels but reversed
                                 {
                                     inDimension:"dimensionIRI",
                                     inHierarchy:"hierarchyIRI",
                                     name:"levelIRI",
-                                    parentLevel:"levelIRI",
+                                    parentLevel:"levelIRI", //could be null
                                     rollupRelation:"rollupRelationIRI", //could be null
                                 }
-                            ]
+                    ]
+                    levels: [
+                        {
+                            inDimension:"dimensionIRI",
+                            inHierarchy:"hierarchyIRI",
+                            isCuboid: true,
+                            name:"levelIRI",
+                            parentLevel:"levelIRI",
+                            rollupRelation:"rollupRelationIRI", //could be null
+                            
                         }
 
                     ]
@@ -80,28 +82,35 @@ selectionForQueryState.selectedMeasures: [
 
 
 /*
-selectionForQueryState.selectedLevels: [
-    {
-        "levelName": "",
-        "prefixName": "",
-        "attributesToBeViewed": [
+selectionForQueryState.selectedLevels: {
+    "dimensionIRI": {
+      dimensionName: "dimensionIRI",
+      rollupSerials: [], // List of rollup serials
+      selectedHierarchy: "hierarchyIRI", // Selected hierarchy
+      selectedLevels: [
+        {
+          "levelName": "levelIRI",
+          "prefixName": "prefixIRI",
+          "attributesToBeViewed": [
             {
-                "attributeName": "",
-                "prefixName": ""
+              "attributeName": "attributeIRI",
+              "prefixName": "prefixIRI"
             }
-        ],
-        "selectedInstances": [
+          ],
+          "selectedInstances": [
             {
-                "attributeName": "",
-                prefixIRI:"",
-                "instances": [
-                    {
-                        "type": "",
-                        "value": ""
-                    }
-                ]
+              "originalIRI": "attributeIRI",
+              "prefixIRI": "prefixIRI",
+              "instances": [
+                {
+                  "type": "typeIRI",
+                  "value": "valueIRI"
+                }
+              ]
             }
-        ]
+          ]
+        }
+      ]
     }
-]
+  }
 */

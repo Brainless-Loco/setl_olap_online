@@ -19,9 +19,12 @@ export default function CodeModal() {
 
     useEffect(() => {
         
-        if(everyThingForQuery.selectedLevels.length>0 &&
-            everyThingForQuery.selectedMeasures.length>0
-        ) console.log(GenerateQuery(everyThingForQuery))
+        if(everyThingForQuery.selectedLevels !== {} >0 &&
+            everyThingForQuery.selectedMeasures.length>0)
+        {
+            // console.log(GenerateQuery(everyThingForQuery))
+            GenerateQuery(everyThingForQuery)
+        }
     }, [everyThingForQuery])
     
     

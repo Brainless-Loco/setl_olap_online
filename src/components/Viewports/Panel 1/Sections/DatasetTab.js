@@ -98,7 +98,6 @@ const DatasetTab = ({}) => {
         setLoading(false)
     }
 
-    // console.log(treeStructures)
 
     const getMeasureList = async () =>{
         setLoading(true) 
@@ -160,7 +159,7 @@ const DatasetTab = ({}) => {
             <Box className="py-1">
                 <b>Dimensions</b>
                 {
-                    dataset.length>0 && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]] && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]].dimension.map(d=>(
+                    dataset.length>0 && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]] && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]].dimensions.map(d=>(
                         <Dimension key={d.name} info={d}/>
                     ))
                     

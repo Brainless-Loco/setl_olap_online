@@ -53,7 +53,7 @@ export default function Hierarchy({info}) {
             <Box sx={{borderColor:'gray',borderLeftWidth:'2px',paddingLeft:'15px'}} hidden={!levelShow}>
                 {
                     info && info.name.length>0 && info.levels.map(l=>(
-                        <Level key={l.name} info={l}/>
+                        <Level key={l.name} info={l} rollupSerial={info.rollUpSerial}/>
                     ))
                     
                 }
