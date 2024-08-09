@@ -80,7 +80,6 @@ const FileListTab = ({}) => {
                 <InputLabel id='tbox-select'>TBox IRI</InputLabel>
                 <Select
                     labelId="tbox-select"
-                    sx={{ height:'40px'}}
                     label='TBox IRI'
                     value={tbox}
                     onChange={(e)=>dispatch(update_TBox(e.target.value))}
@@ -95,7 +94,6 @@ const FileListTab = ({}) => {
                 <InputLabel id='abox-select'>ABox IRI</InputLabel>
                 <Select
                     labelId="abox-select"
-                    sx={{height:'40px' }}
                     label='ABox IRI'
                     value={abox}
                     onChange={(e)=>dispatch(update_ABox(e.target.value))}

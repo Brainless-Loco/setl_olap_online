@@ -19,6 +19,8 @@ export default function ActionButtonGroup() {
     const [query, setQuery] = useState(`# Your Sparql Code is loading....`)
     const [resultData, setResultData] = useState([])
 
+    const [resultGenTime, setResultGenTime] = useState('')
+
     
     const everyThingForQuery = useSelector(state=>state.queryReducer)
 
@@ -45,6 +47,7 @@ export default function ActionButtonGroup() {
     const fetchResults = async ()=>{
         setLoading(true)
         setResultsTabOpen(true)
+        const startTime = Date.now();
         const response = await fetch('/api/get_query_result', {
             method: 'POST',
             headers: {
@@ -55,7 +58,9 @@ export default function ActionButtonGroup() {
         if (!response) {
             alert('Network response was not ok');
         }
-  
+        const endTime = Date.now();
+
+        setResultGenTime(endTime-startTime)
         const {data} = await response.json();
         setResultData(data)
         setLoading(false)
@@ -96,7 +101,7 @@ export default function ActionButtonGroup() {
                 Execute Query
             </Button>
             <CodeModal query={query} open={codeModalOpen} setOpen={setCodeModalOpen} loading={loading} />
-            <ResultModal open={resultsTabOpen} resultData={resultData} setOpen={setResultsTabOpen} loading={loading} />
+            <ResultModal resultGenTime={resultGenTime} open={resultsTabOpen} resultData={resultData} setOpen={setResultsTabOpen} loading={loading} />
         </Box>
     )
 }

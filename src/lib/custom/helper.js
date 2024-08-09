@@ -146,11 +146,36 @@ export const updateSelectedInstances = (levelName, attribute, instances, selecte
   return newSelectedData;
 };
 
-
-
 export const getFullIRIFromPrefix = (prefix, prefixes) =>{
     const splittedPrefix = prefix.split(':')
     var fulIRI = prefixes[splittedPrefix[0]]+'#'+splittedPrefix[1]
     return fulIRI
 }
 
+export const extractChartData =  (results)=>{
+  const labels = new Set();
+  const datasets = {};
+
+  results.forEach((row) => {
+    Object.keys(row).forEach((key) => {
+      if (row[key].datatype) { // This is a measure
+        if (!datasets[key]) {
+          datasets[key] = {
+            label: key,
+            data: [],
+            borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+            backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}66`,
+          };
+        }
+        datasets[key].data.push(parseFloat(row[key].value));
+      } else { // Assume this is a label (category)
+        labels.add(row[key].value);
+      }
+    });
+  });
+
+  return {
+    labels: Array.from(labels),
+    datasets: Object.values(datasets),
+  };
+}

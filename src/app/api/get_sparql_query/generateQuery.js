@@ -83,10 +83,14 @@ ORDER BY `
             }
         });
 
-        if (addedAttributes.size === 0) {
+        if (groupByClause === `
+GROUP BY `){
             groupByClause = '';
-            orderByClause = '';
-          }
+        }
+          if(orderByClause === `
+ORDER BY `){
+                orderByClause = '';
+            }
 
 
       })
