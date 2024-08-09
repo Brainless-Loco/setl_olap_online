@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import {useEffect, useState} from 'react'
 import { Editor } from '@monaco-editor/react';
 
-export default function index() {
+export default function Index() {
     const [sparqlCode, setSparqlCode] = useState('# Write your spraql code here...');
     const [loading, setLoading] = useState(false)
     const [resultGenTime, setResultGenTime] = useState(0)
