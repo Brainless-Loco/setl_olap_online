@@ -12,6 +12,7 @@ import { useState } from 'react';
 import Typography  from '@mui/material/Typography';
 import { Editor } from '@monaco-editor/react';
 import { Bar, Line } from 'react-chartjs-2';
+import { Chart as ChartJS } from 'chart.js/auto';
 import { extractChartData } from '@/lib/custom/helper';
 
 export default function ResultModal({resultGenTime, loading, open, setOpen, resultData}) {
@@ -21,7 +22,7 @@ export default function ResultModal({resultGenTime, loading, open, setOpen, resu
     const [subTabValue, setSubTabValue] = useState('bar');
 
     const handleChange = (event, newValue) => {
-        if(newValue in ['1','2','3']) setValue(newValue);
+        if(['1','2','3'].includes(newValue)) setValue(newValue);
         else setSubTabValue(newValue);
     };
     
@@ -98,7 +99,7 @@ export default function ResultModal({resultGenTime, loading, open, setOpen, resu
                         </Box>     
                     </TabPanel>
                     <TabPanel className='p-1 m-0' value="2">
-                        <Box sx={{height:510}} className='w-full'>
+                        <Box sx={{height:500}} className='w-full overflow-auto '>
                             <TabContext  value={subTabValue}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                     <TabList centered onChange={handleChange} aria-label="lab API tabs example">
@@ -106,11 +107,16 @@ export default function ResultModal({resultGenTime, loading, open, setOpen, resu
                                         <Tab  label="Line Graph" value="line" />
                                     </TabList>
                                 </Box>
-                                <TabPanel className='p-1 m-0' value="bar">
-                                    <Bar data={chartData} />
+                                <TabPanel className='p-1 w-full h-full m-0' value="bar">
+                                    <Box className='h-5/6 flex items-center'>
+                                        <Bar data={chartData} style={{height:'100%'}} />
+
+                                    </Box>
                                 </TabPanel>
-                                <TabPanel className='p-1 m-0' value="line">
-                                    <Line data={chartData} />
+                                <TabPanel className='p-1 w-full h-full m-0' value="line">
+                                    <Box className='h-5/6 flex items-center'>
+                                        <Line data={chartData} style={{height:'100%'}} />
+                                    </Box>
                                 </TabPanel>
                             </TabContext>
                         </Box>

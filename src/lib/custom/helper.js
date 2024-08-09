@@ -72,6 +72,10 @@ export const removeLevel = (levelName, selectedData) => {
   Object.keys(newSelectedData).forEach(dimensionIRI => {
     // Filter out the level from the selectedLevels array for the current dimension
     newSelectedData[dimensionIRI].selectedLevels = newSelectedData[dimensionIRI].selectedLevels.filter(level => level.levelName !== levelName);
+    
+    if (newSelectedData[dimensionIRI].selectedLevels.length === 0) {
+      delete newSelectedData[dimensionIRI];
+    }
   });
 
   return newSelectedData;
