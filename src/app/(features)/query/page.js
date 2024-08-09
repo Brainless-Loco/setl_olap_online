@@ -1,8 +1,10 @@
+"use client"
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { useState} from 'react'
 import { Editor } from '@monaco-editor/react';
-import CustomQueryResultModal from '../../components/CustomQueryResultModal';
+import CustomQueryResultModal from '@/components/CustomQueryResultModal';
 
 export default function Query() {
     const [sparqlCode, setSparqlCode] = useState('# Write your spraql code here...');
@@ -36,8 +38,8 @@ export default function Query() {
 
     return (
         <main>
-            <Box>
-                <Box sx={{border:'1px solid #c2c4c2',height:'80vh',borderRadius:'8px',overflow:'hidden',marginX:'8px'}}>
+            <Box className="flex justify-center items-center flex-col flex-wrap gap-2">
+                <Box className='w-full pt-3' sx={{border:'1px solid #c2c4c2',height:'80vh',borderRadius:'8px'}}>
                         <Editor
                             defaultLanguage="sparql"
                             value={sparqlCode}
@@ -46,7 +48,7 @@ export default function Query() {
                             />
                             
                 </Box>
-                <Box className="flex justify-center items-center">
+                <Box className="flex justify-center items-center pb-5">
                         <Button 
                             disabled={false}
                             sx={{backgroundColor:'#0d4d15',width:'auto',padding:'14px',margin:'auto',color:'white',borderRadius:'5px',fontWeight:'bold',border:'2px solid transparent',
