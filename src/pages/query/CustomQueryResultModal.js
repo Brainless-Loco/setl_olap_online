@@ -8,6 +8,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel'
+
 import { useState } from 'react';
 import Typography  from '@mui/material/Typography';
 import { Editor } from '@monaco-editor/react';
@@ -18,11 +19,8 @@ export default function ResultModal({resultGenTime, loading, open, setOpen, resu
     
     const [value, setValue] = useState('1');
 
-    const [subTabValue, setSubTabValue] = useState('bar');
-
     const handleChange = (event, newValue) => {
-        if(newValue in ['1','2','3']) setValue(newValue);
-        else setSubTabValue(newValue);
+        setValue(newValue);
     };
     
     const rows = resultData.map((row, index) => {
@@ -56,7 +54,6 @@ export default function ResultModal({resultGenTime, loading, open, setOpen, resu
     })) : [];
 
 
-    const chartData = extractChartData(resultData);
 
     return (
         <Dialog
@@ -73,8 +70,7 @@ export default function ResultModal({resultGenTime, loading, open, setOpen, resu
                         }
                         <TabList  onChange={handleChange} aria-label="lab API tabs example">
                             <Tab  label="Tabular" value="1" />
-                            <Tab disabled={loading} label="Graphical" value="2" />
-                            <Tab disabled={loading} label="JSON" value="3" />
+                            <Tab disabled={loading} label="JSON" value="2" />
                         </TabList>
                     </Box>
                     <TabPanel className='p-1 m-0' value="1">
@@ -98,25 +94,6 @@ export default function ResultModal({resultGenTime, loading, open, setOpen, resu
                         </Box>     
                     </TabPanel>
                     <TabPanel className='p-1 m-0' value="2">
-                        <Box sx={{height:510}} className='w-full'>
-                            <TabContext  value={subTabValue}>
-                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                    <TabList centered onChange={handleChange} aria-label="lab API tabs example">
-                                        <Tab  label="Bar Graph" value="bar" />
-                                        <Tab  label="Line Graph" value="line" />
-                                    </TabList>
-                                </Box>
-                                <TabPanel className='p-1 m-0' value="bar">
-                                    <Bar data={chartData} />
-                                </TabPanel>
-                                <TabPanel className='p-1 m-0' value="line">
-                                    <Line data={chartData} />
-                                </TabPanel>
-                            </TabContext>
-                        </Box>
-
-                    </TabPanel>
-                    <TabPanel className='p-1 m-0' value="3">
                         <Box sx={{height:510}}>
                             <Editor height="82%" width="100%"
                             onChange={(e,v)=>{console.log(v)}} 
