@@ -12,10 +12,8 @@ import TabPanel from '@mui/lab/TabPanel'
 import { useState } from 'react';
 import Typography  from '@mui/material/Typography';
 import { Editor } from '@monaco-editor/react';
-import { Bar, Line } from 'react-chartjs-2';
-import { extractChartData } from '@/lib/custom/helper';
 
-export default function ResultModal({resultGenTime, loading, open, setOpen, resultData}) {
+export default function CustomQueryResultModal({resultGenTime, loading, open, setOpen, resultData}) {
     
     const [value, setValue] = useState('1');
 
