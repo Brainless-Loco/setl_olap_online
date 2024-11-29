@@ -5,7 +5,7 @@ module.exports = class SparqlClient {
     constructor(endpoint, user, password) {
         this.user = user ?? 'dba'
 
-        this.password = password ?? 'dba'
+        // this.password = password ?? 'dba'
         // this.endpoint = endpoint ?? `http://${getIPV4()}:8890/sparql`
         // this.endpoint = endpoint ?? `http://localhost:8890/sparql`
         
@@ -16,7 +16,7 @@ module.exports = class SparqlClient {
         // this.endpoint = endpoint ?? `http://bike-csecu.com:8892/sparql`
 
         // this.password = password ?? 'dba'
-        // this.endpoint = endpoint ?? `http://bike-csecu.com:8893\/sparql`
+        // this.endpoint = endpoint ?? `http://bike-csecu.com:8894/sparql`
     }
 
     async query(sparql) {

@@ -15,7 +15,7 @@ export async function POST (request=Request) {
         + `SELECT DISTINCT ?measure ?range ?aggFunc\n`
         + `FROM<${tbox}>\n`
         + `WHERE {\n`
-        + `\t?dataset rdf:type qb:DataSet;\n`
+        + `\t<${dataset}> rdf:type qb:DataSet;\n`
         + `\t\tqb:structure ?cuboid.\n`
         + `\t?cuboid qb:component ?BNodeForMeasure.\n`
         + `\t?BNodeForMeasure qb:measure ?measure;\n`
@@ -24,7 +24,7 @@ export async function POST (request=Request) {
         + `}\n`
         + `ORDER BY ?measure`;
 
-
+        // console.log(sparql)
     const result = await client.query(sparql)
     const data = result.data.results.bindings
     return NextResponse.json({Measures:mergeMeasures(data)});

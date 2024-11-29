@@ -45,6 +45,8 @@ prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n`
     +  `BIND(IF(?cuboidLevel = ?child, "yes", "no") AS ?isCuboidLevel)`
     +  `}\n`
     +  `ORDER BY ?dimension ?hierarchy ?parent`
+
+    // console.log(sparql)
     const result = await client.query(sparql)
     const data = result.data.results.bindings
 
