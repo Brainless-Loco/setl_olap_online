@@ -43,7 +43,7 @@ prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n`
     +  `\t\t\tqb4o:rollup ?rollupProperty.\n`
     +  `\t}\n`
     +  `BIND(IF(?cuboidLevel = ?child, "yes", "no") AS ?isCuboidLevel)`
-    +  `}\n`
+    +  `\n}\n`
     +  `ORDER BY ?dimension ?hierarchy ?parent`
 
     // console.log(sparql)
