@@ -4,6 +4,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useDispatch, useSelector } from "react-redux";
 import { add_to_prefix_list } from "@/lib/redux/action";
 import AggFunction from "./AggFunction";
+import { splitIRI } from "@/lib/custom/helper"
 
 export default function Measure({info}) {
     const dispatch = useDispatch()
@@ -16,7 +17,7 @@ export default function Measure({info}) {
     const prefixes = useSelector((state) => state.datasetReducer.prefixes);
 
     const getPrefixName = (rangeName) => {
-        const splittedName = rangeName.split('#');
+        const splittedName = splitIRI(rangeName)
         const prefixKey = splittedName[0];
     
         let prefixName;
@@ -39,15 +40,15 @@ export default function Measure({info}) {
     };
 
     const update_measure_name_prefix = ()=>{
-        const splittedName = info.measureName.split('#')
+        const splittedName = splitIRI(info.measureName)
         var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
         var tempID = ''
         if(splittedName[0] in tempPrefixes !== true){
 
-            tempPrefixes[splittedName[0]] =  "mdProperty"+tempID;
-            tempPrefixes["mdProperty"+tempID] =  splittedName[0];
+            tempPrefixes[splittedName[0]] =  "prefix"+tempID;
+            tempPrefixes["prefix"+tempID] =  splittedName[0];
             
-            setMeasureName("mdProperty"+tempID+":"+splittedName[1]);
+            setMeasureName("prefix"+tempID+":"+splittedName[1]);
             if(tempID === '') tempID = (Object.keys(prefixes).length)/2;
             else tempID++;
         }

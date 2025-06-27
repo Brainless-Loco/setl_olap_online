@@ -2,27 +2,29 @@ import { add_to_prefix_list, update_selected_measure_list } from "@/lib/redux/ac
 import Box from "@mui/material/Box"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { splitIRI } from "@/lib/custom/helper"
 
 export default function AggFunction({info, measureInfo}) {
 
     const dispatch = useDispatch()
 
     const [aggFuncName, setAggFuncName] = useState('')
+    
+    const selected_measures = useSelector((state) => state.queryReducer.selectedMeasures);
 
     const prefixes = useSelector((state) => state.datasetReducer.prefixes);
 
-    const selected_measures = useSelector((state) => state.queryReducer.selectedMeasures);
 
     const update_aggFunc_name_prefix = ()=>{
-        const splittedName = info.aggFuncName.split('#')
+        const splittedName = splitIRI(info.aggFuncName)
         var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
         var tempID = ''
         if(splittedName[0] in tempPrefixes !== true){
 
-            tempPrefixes[splittedName[0]] =  "qb4o"+tempID;
-            tempPrefixes["qb4o"+tempID] =  splittedName[0];
+            tempPrefixes[splittedName[0]] =  "prefix"+tempID;
+            tempPrefixes["prefix"+tempID] =  splittedName[0];
             
-            setAggFuncName("qb4o"+tempID+":"+splittedName[1]);
+            setAggFuncName("prefix"+tempID+":"+splittedName[1]);
             if(tempID === '') tempID = 1;
             else tempID++;
         }

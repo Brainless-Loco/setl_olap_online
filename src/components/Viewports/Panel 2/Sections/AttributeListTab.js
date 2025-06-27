@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography'
 import {  useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { DataGrid } from '@mui/x-data-grid'
+import { splitIRI } from "@/lib/custom/helper"
 
 export default function AttributeListTab() {
 
@@ -48,7 +49,7 @@ export default function AttributeListTab() {
     ]
 
     const update_level_name_prefix = ()=>{
-        const splittedName = selectedLevelData.levelName.split('#')
+        const splittedName = splitIRI(selectedLevelData.levelName)
         setLevelName(prefixes[splittedName[0]]+":"+splittedName[1]);
     }
 
@@ -59,13 +60,13 @@ export default function AttributeListTab() {
         var tempID = ''
 
         selectedLevelData.attributes.forEach((a,idx)=>{
-            const splittedName = a.attributeName.split('#')
+            const splittedName = splitIRI(a.attributeName)
             if(splittedName[0] in tempPrefixes !== true){
-                tempPrefixes[splittedName[0]] =  "mdAttribute"+tempID;
-                tempPrefixes["mdAttribute"+tempID] =  splittedName[0];
+                tempPrefixes[splittedName[0]] =  "prefix"+tempID;
+                tempPrefixes["prefix"+tempID] =  splittedName[0];
                 tempAttributeList.push({
                     ...a,
-                    prefixIRI: "mdAttribute"+tempID + ":" + splittedName[1]
+                    prefixIRI: "prefix"+tempID + ":" + splittedName[1]
                 })
                 if(tempID === '') tempID = 1;
                 else tempID++;
@@ -133,7 +134,7 @@ export default function AttributeListTab() {
             selectedToBeViewedAttribute.split(',').map((a,id) => {
                 const [baseURI, attrName] = a.split(':')
                 updatedAttrToBeViewed.push({
-                    "attributeName": prefixes[baseURI] +"#"+attrName,
+                    "attributeName": prefixes[baseURI] +attrName,
                     "prefixName": a
                 })
             })

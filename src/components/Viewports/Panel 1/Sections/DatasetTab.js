@@ -10,6 +10,7 @@ import { add_to_prefix_list, clear_for_dataset_change, update_dataset, update_di
 import { CircularProgress } from "@mui/material"
 import Measure from "@/components/TreeStructure/Measure"
 import { Troubleshoot } from "@mui/icons-material"
+import { splitIRI } from "@/lib/custom/helper"
 
 
 const DatasetTab = ({}) => {
@@ -33,7 +34,7 @@ const DatasetTab = ({}) => {
 
     const getMetaDataOfDataset = async()=>{
         const splittedDataset = dataset.split(':')
-        var datasetIRI = prefixes[splittedDataset[0]]+'#'+splittedDataset[1]
+        var datasetIRI = prefixes[splittedDataset[0]]+splittedDataset[1]
         const res = await fetch('/api/get_metadata_of_dataset', {
             method: "POST",
             body:JSON.stringify({tbox:tbox,abox:abox,dataset:datasetIRI})}
@@ -42,20 +43,20 @@ const DatasetTab = ({}) => {
             var data = await res.json()
             data = data.data
             if(data){
-                const splittedSchemaIRI = data.cuboid.value.split('#')
+                const splittedSchemaIRI = splitIRI(data.cuboid.value)
                 var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
                 if(splittedSchemaIRI[0] in tempPrefixes !== true){
                     var tempID = Math.floor((Math.random() * 100) + 1);
-                    if("mdStructure" in tempPrefixes !==Troubleshoot) tempID = ""
+                    if("prefix" in tempPrefixes !==Troubleshoot) tempID = ""
                     else{
-                        while(("mdStructure"+tempID) in tempPrefixes){ 
+                        while(("prefix"+tempID) in tempPrefixes){ 
                             tempID = Math.floor((Math.random() * 100) + 1);
                         }
                     }
-                    tempPrefixes[splittedSchemaIRI[0]] =  "mdStructure"+tempID;
-                    tempPrefixes["mdStructure"+tempID] =  splittedSchemaIRI[0];
+                    tempPrefixes[splittedSchemaIRI[0]] =  "prefix"+tempID;
+                    tempPrefixes["prefix"+tempID] =  splittedSchemaIRI[0];
                     
-                    setSchemaName("mdStructure"+tempID+":"+splittedSchemaIRI[1]);
+                    setSchemaName("prefix"+tempID+":"+splittedSchemaIRI[1]);
                 }    
                 else{
                     setSchemaName(tempPrefixes[splittedSchemaIRI[0]]+":"+splittedSchemaIRI[1]);
@@ -76,7 +77,7 @@ const DatasetTab = ({}) => {
     const getTreeStructure = async ()=>{ 
         setLoading(true) 
         const splittedDataset = dataset.split(':')
-        var datasetIRI = prefixes[splittedDataset[0]]+'#'+splittedDataset[1]
+        var datasetIRI = prefixes[splittedDataset[0]]+splittedDataset[1]
         if(treeStructures && 
             treeStructures.datasetIRI){
                 setLoading(false)
@@ -102,7 +103,7 @@ const DatasetTab = ({}) => {
     const getMeasureList = async () =>{
         setLoading(true) 
         const splittedDataset = dataset.split(':')
-        var datasetIRI = prefixes[splittedDataset[0]]+'#'+splittedDataset[1]
+        var datasetIRI = prefixes[splittedDataset[0]]+splittedDataset[1]
         if(measuresList && 
             measuresList.datasetIRI){
                 setLoading(false)
@@ -159,7 +160,7 @@ const DatasetTab = ({}) => {
             <Box className="py-1">
                 <b>Dimensions</b>
                 {
-                    dataset.length>0 && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]] && treeStructures[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]].dimensions.map(d=>(
+                    dataset.length>0 && treeStructures[prefixes[dataset.split(':')[0]]+dataset.split(':')[1]] && treeStructures[prefixes[dataset.split(':')[0]]+dataset.split(':')[1]].dimensions.map(d=>(
                         <Dimension key={d.name} info={d}/>
                     ))
                     
@@ -168,7 +169,7 @@ const DatasetTab = ({}) => {
             <Box className="py-1">
                 <b>Measures</b>
                 {
-                   dataset.length>0 && measuresList[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]] && measuresList[prefixes[dataset.split(':')[0]]+'#'+dataset.split(':')[1]].Measures.map(m=>(
+                   dataset.length>0 && measuresList[prefixes[dataset.split(':')[0]]+dataset.split(':')[1]] && measuresList[prefixes[dataset.split(':')[0]]+dataset.split(':')[1]].Measures.map(m=>(
                         <Measure key={m.measureName} info={m}/>
                    ))
                 }

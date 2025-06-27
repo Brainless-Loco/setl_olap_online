@@ -150,11 +150,29 @@ export const updateSelectedInstances = (levelName, attribute, instances, selecte
   return newSelectedData;
 };
 
-export const getFullIRIFromPrefix = (prefix, prefixes) =>{
-    const splittedPrefix = prefix.split(':')
-    var fulIRI = prefixes[splittedPrefix[0]]+'#'+splittedPrefix[1]
-    return fulIRI
+export const splitIRI = (iri)=> {
+  const hashIndex = iri.lastIndexOf('#');
+  const slashIndex = iri.lastIndexOf('/');
+
+  if (hashIndex > slashIndex) {
+    return [iri.slice(0, hashIndex + 1), iri.slice(hashIndex + 1)];
+  } else {
+    return [iri.slice(0, slashIndex + 1), iri.slice(slashIndex + 1)];
+  }
 }
+
+
+export const getFullIRIFromPrefix = (prefix, prefixes) => {
+  const [prefixKey, localName] = prefix.split(':');
+  const namespace = prefixes[prefixKey];
+
+  if (!namespace) {
+    throw new Error(`Unknown prefix: ${prefixKey}`);
+  }
+
+  return namespace + localName;
+};
+
 
 export const extractChartData =  (results)=>{
   const labels = new Set();

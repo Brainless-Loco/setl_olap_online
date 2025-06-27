@@ -156,4 +156,10 @@ const sortLevelsByRollupSerial = (selectedLevels) => {
   }
   
 
-const getVarName = iri => iri.split('#')[1] || iri.split('/').pop();
+const getVarName = iri => {
+  const hashIndex = iri.lastIndexOf('#');
+  const slashIndex = iri.lastIndexOf('/');
+
+  const splitIndex = Math.max(hashIndex, slashIndex);
+  return iri.substring(splitIndex + 1);
+};

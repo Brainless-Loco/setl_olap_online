@@ -4,6 +4,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Level from "./Level";
 import { useDispatch, useSelector } from "react-redux";
 import { add_to_prefix_list } from "@/lib/redux/action";
+import { splitIRI } from "@/lib/custom/helper"
+
 
 export default function Hierarchy({info}) {
     
@@ -15,15 +17,15 @@ export default function Hierarchy({info}) {
     const prefixes = useSelector((state) => state.datasetReducer.prefixes);
 
     const update_hierarchy_name_prefix = ()=>{
-        const splittedName = info.name.split('#')
+        const splittedName = splitIRI(info.name)
         var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
         var tempID = ''
         if(splittedName[0] in tempPrefixes !== true){
 
-            tempPrefixes[splittedName[0]] =  "mdStructure"+tempID;
-            tempPrefixes["mdStructure"+tempID] =  splittedName[0];
+            tempPrefixes[splittedName[0]] =  "prefix"+tempID;
+            tempPrefixes["prefix"+tempID] =  splittedName[0];
             
-            setHierarchyName("mdStructure"+tempID+":"+splittedName[1]);
+            setHierarchyName("prefix"+tempID+":"+splittedName[1]);
             if(tempID === '') tempID = 1;
             else tempID++;
         }

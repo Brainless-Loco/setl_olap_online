@@ -2,6 +2,8 @@ import { add_to_all_level_data, add_to_prefix_list, try_to_add_level, update_sel
 import Box from "@mui/material/Box"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { splitIRI } from "@/lib/custom/helper"
+
 
 export default function Level({info,rollupSerial}) {
 
@@ -16,15 +18,15 @@ export default function Level({info,rollupSerial}) {
     const allLevelData = useSelector((state)=> state.datasetReducer.allLevelData)
 
     const update_level_name_prefix = ()=>{
-        const splittedName = info.name.split('#')
+        const splittedName = splitIRI(info.name)
         var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
         var tempID = ''
         if(splittedName[0] in tempPrefixes !== true){
 
-            tempPrefixes[splittedName[0]] =  "mdProperty"+tempID;
-            tempPrefixes["mdProperty"+tempID] =  splittedName[0];
+            tempPrefixes[splittedName[0]] =  "prefix"+tempID;
+            tempPrefixes["prefix"+tempID] =  splittedName[0];
             
-            setLevelName("mdProperty"+tempID+":"+splittedName[1]);
+            setLevelName("prefix"+tempID+":"+splittedName[1]);
             if(tempID === '') tempID = 1;
             else tempID++;
         }

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { add_to_prefix_list, update_ABox, update_dataset_list, update_TBox } from "@/lib/redux/action"
 import { Typography } from "@mui/material"
 import CircularProgress from '@mui/material/CircularProgress';
+import { splitIRI } from "@/lib/custom/helper"
 
 const FileListTab = ({}) => {
 
@@ -46,13 +47,13 @@ const FileListTab = ({}) => {
             const tempDatasetList = []
             let datasetID = '';
             data.datasetList.forEach(prefix=>{
-                prefix = prefix.split('#')
+                prefix = splitIRI(prefix)
                 if(prefix[0] in tempPrefixes !== true){
 
-                    tempPrefixes[prefix[0]] =  "dataset"+datasetID;
-                    tempPrefixes["dataset"+datasetID] =  prefix[0];
+                    tempPrefixes[prefix[0]] =  "prefix"+datasetID;
+                    tempPrefixes["prefix"+datasetID] =  prefix[0];
                     
-                    tempDatasetList.push("dataset"+datasetID+":"+prefix[1]);
+                    tempDatasetList.push("prefix"+datasetID+":"+prefix[1]);
                     if(datasetID === '') datasetID = 1;
                     else datasetID++;
                 }

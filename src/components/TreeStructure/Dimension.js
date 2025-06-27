@@ -4,6 +4,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Hierarchy from "./Hierarchy";
 import { useDispatch, useSelector } from "react-redux";
 import { add_to_prefix_list } from "@/lib/redux/action";
+import { splitIRI } from "@/lib/custom/helper"
 
 export default function Dimension({info}) {
     
@@ -16,15 +17,15 @@ export default function Dimension({info}) {
     const prefixes = useSelector((state) => state.datasetReducer.prefixes);
 
     const update_Dimension_name_prefix = ()=>{
-        const splittedName = info.name.split('#')
+        const splittedName = splitIRI(info.name)
         var tempPrefixes = JSON.parse(JSON.stringify(prefixes))
         var tempID = ''
         if(splittedName[0] in tempPrefixes !== true){
 
-            tempPrefixes[splittedName[0]] =  "mdProperty"+tempID;
-            tempPrefixes["mdProperty"+tempID] =  splittedName[0];
+            tempPrefixes[splittedName[0]] =  "prefix"+tempID;
+            tempPrefixes["prefix"+tempID] =  splittedName[0];
             
-            setDimensionName("mdProperty"+tempID+":"+splittedName[1]);
+            setDimensionName("prefix"+tempID+":"+splittedName[1]);
             if(tempID === '') tempID = 1;
             else tempID++;
         }

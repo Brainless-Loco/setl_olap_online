@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { splitIRI } from "@/lib/custom/helper"
 
 const SparqlClient = require("../sparqlClient/SparqlClient")
 
@@ -45,7 +46,7 @@ const mergeMeasures = (data) => {
           measureName: measureUrl,
           range:{
             rangeName: rangeUrl,
-            rangeValue: rangeUrl.split('#')[1]
+            rangeValue: splitIRI(rangeUrl)[1]
           },
           aggFunctions: []
         };
