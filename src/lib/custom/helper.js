@@ -174,7 +174,12 @@ export const getFullIRIFromPrefix = (prefix, prefixes) => {
 };
 
 
-export const extractChartData =  (results)=>{
+const getRandomDeepColor = () => {
+  const hue = Math.floor(Math.random() * 360);
+  return `hsl(${hue}, 100%, 30%)`; // deep and vivid
+};
+
+export const extractChartData = (results) => {
   const labels = new Set();
   const datasets = {};
 
@@ -182,11 +187,12 @@ export const extractChartData =  (results)=>{
     Object.keys(row).forEach((key) => {
       if (row[key].datatype) { // This is a measure
         if (!datasets[key]) {
+          const baseColor = getRandomDeepColor();
           datasets[key] = {
             label: key,
             data: [],
-            borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-            backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}66`,
+            borderColor: baseColor,
+            backgroundColor: baseColor.replace('30%)', '30%, 0.6)'), // add alpha
           };
         }
         datasets[key].data.push(parseFloat(row[key].value));
@@ -200,4 +206,5 @@ export const extractChartData =  (results)=>{
     labels: Array.from(labels),
     datasets: Object.values(datasets),
   };
-}
+};
+
