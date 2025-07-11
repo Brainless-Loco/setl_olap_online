@@ -8,12 +8,12 @@ export default function Footer() {
       <CopyrightIcon className="mr-2" />
       <span>BIKE Lab 2024-2025 | Developed by</span>
       <a
-        href="https://github.com/Brainless-Loco"
+        href="https://github.com/BIKE-Lab"
         target="_blank"
         rel="noopener noreferrer"
         className="underline text-white hover:text-cyan-300"
       >
-        Brainless Loco
+        BIKE Lab
       </a>
     </Box>
 
