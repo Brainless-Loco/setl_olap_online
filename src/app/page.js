@@ -1,5 +1,4 @@
 "use client"
-
 import Viewport1 from "@/components/Viewports/Panel 1/Viewport1";
 import { Provider } from "react-redux";
 import store from '../lib/redux/store'
@@ -7,6 +6,7 @@ import Viewport2 from "@/components/Viewports/Panel 2/ViewPort2";
 import Viewport3 from "@/components/Viewports/Panel 3/Viewport3";
 import Box from '@mui/material/Box'
 import ActionButtonGroup from "@/components/ActionButtonGroup/ActionButtonGroup";
+import Alert from "@/components/Alerts/Alert"
 
 export default function Home() {
 
@@ -20,6 +20,7 @@ export default function Home() {
           <Viewport3 />
         </Box>
         <ActionButtonGroup/>
+        <Alert/>
         
       </main>
       

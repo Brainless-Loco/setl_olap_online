@@ -32,7 +32,29 @@ datasetInitialState.treeStructures:{
                     ]
                 }
             ]
-        ]
+        ],
+
+      Measures:[
+              {
+                measureName: "http://bike-csecu.com/datasets/diabatic/tbox/numOfPatient",
+                range: {
+                  rangeName: "http://www.w3.org/2001/XMLSchema#integer",
+                  rangeValue: "integer"
+                },
+                aggFunctions: [
+                  {
+                    aggFuncName: "http://purl.org/qb4olap/cubes#avg"
+                  },
+                ],
+                additivityInfo: {
+                  semiAdditiveDims: [
+                    "http://example.org/dimensions#time",
+                    "http://example.org/dimensions#region"
+                  ],
+                  nonAdditiveDims: true | false,
+                }
+              }
+      ]
     }
 }
 */

@@ -1,4 +1,4 @@
-import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, CLEAR_FOR_DATASET_CHANGE, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_LEVEL, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, TRY_TO_ADD_LEVEL, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST, UPDATE_LEVEL_INSTANCES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX } from "./type";
+import { ADD_TO_ALL_LEVEL_DATA, ADD_TO_PREFIX_LIST, CLEAR_FOR_DATASET_CHANGE, REMOVE_AN_AGGREGATE_FUNCTION_FROM_A_MEASURE, REMOVE_LEVEL, REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST, TRY_TO_ADD_LEVEL, UPDATE_ABOX, UPDATE_DATASET, UPDATE_DATASET_LIST, UPDATE_DIMENSION_TREES, UPDATE_LEVEL_ATTRIBUTES_TO_VIEW_LIST, UPDATE_LEVEL_INSTANCES, UPDATE_MEASURE_LIST, UPDATE_SELECTED_LEVEL_DATA, UPDATE_SELECTED_MEASURE_LIST, UPDATE_TBOX, CLEAR_ALERT } from "./type";
 
 
 // common
@@ -53,7 +53,22 @@ export const add_to_all_level_data = (levelName, levelData) => ({
 })
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ################################################################
 // Actions for Query Reducer
+// ################################################################
 
 export const try_to_add_level = (levelInfo) =>({
     type: TRY_TO_ADD_LEVEL,
@@ -96,4 +111,8 @@ export const update_level_instances = (levelName, attribute, instances) => ({
 
 export const clear_for_dataset_change = ()=>({
     type: CLEAR_FOR_DATASET_CHANGE
+})
+
+export const clear_alert = ()=>({
+    type: CLEAR_ALERT
 })
