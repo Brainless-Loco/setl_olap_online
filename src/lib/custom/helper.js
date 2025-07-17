@@ -2,6 +2,50 @@ const deepCopy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
 
+export function checkMeasureAdditivity(measures) {
+  const SUM_URI = "http://purl.org/qb4olap/cubes#sum";
+  const alertInfo = { message: "", title: "", type: "" };
+  const updatedMeasures = [];
+
+  for (const measure of measures) {
+    const isNonAdditive = measure.additivityInfo?.nonAdditiveDims === true;
+    const aggFunctions = measure.aggFunctions;
+    const hasSum = aggFunctions.some(func => func.aggFuncName === SUM_URI);
+    const hasOnlySum = aggFunctions.length === 1 && hasSum;
+
+    // CASE 1: Measure is non-additive and has only SUM
+    if (isNonAdditive && hasOnlySum) {
+      alertInfo.message = "The selected measure cannot be aggregated using SUM because it is non-additive across all dimensions.";
+      alertInfo.title = "Invalid Aggregation";
+      alertInfo.type = "error";
+      continue; // Exclude the measure entirely
+    }
+
+    // CASE 2: Measure is non-additive and includes SUM among other aggFuncs
+    if (isNonAdditive && hasSum && !hasOnlySum) {
+      const filteredAggs = aggFunctions.filter(func => func.aggFuncName !== SUM_URI);
+      updatedMeasures.push({ ...measure, aggFunctions: filteredAggs });
+      alertInfo.message = "SUM aggregation has been removed because the selected measure is non-additive and cannot be summed across any dimension.";
+      alertInfo.title = "SUM Removed from Non-Additive Measure";
+      alertInfo.type = "warning";
+      continue;
+    }
+
+    // CASE 3: Measure is non-additive but has no SUM – include as-is
+    if (isNonAdditive && !hasSum) {
+      updatedMeasures.push(measure);
+      continue;
+    }
+
+    // CASE 4: Measure is additive or semi-additive – include as-is
+    updatedMeasures.push(measure);
+  }
+
+  return { alertInfo, updatedMeasures };
+}
+
+
+
 
 export const remove_agg_func = (selectedMeasures, measureName, aggFuncName)=>{
     var tempMeasures = selectedMeasures.map(measure => {

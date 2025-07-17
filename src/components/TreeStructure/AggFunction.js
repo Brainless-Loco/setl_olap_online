@@ -40,6 +40,8 @@ export default function AggFunction({info, measureInfo}) {
 
         const { measureName, measurePrefixName } = measureInfo;
 
+        // console.log("measureInfo", measureInfo)
+
         const updatedMeasures = selected_measures.map(measure => {
             if (measure.measurePrefixName === measurePrefixName) {
                 measureFound = true;
@@ -63,6 +65,7 @@ export default function AggFunction({info, measureInfo}) {
             updatedMeasures.push({
                 measureName,
                 measurePrefixName,
+                additivityInfo: measureInfo.additivityInfo,
                 range:measureInfo.range,
                 aggFunctions: [{ "aggFuncName": info.aggFuncName, "prefixName": aggFuncName }]
             });

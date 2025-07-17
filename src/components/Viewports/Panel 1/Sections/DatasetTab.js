@@ -116,7 +116,7 @@ const DatasetTab = ({}) => {
         )
         if(res){
             const data = await res.json()
-            console.log(data)
+            // console.log(data)
             dispatch(update_measure_list({...measuresList, [datasetIRI]:data}))
         }
         else{

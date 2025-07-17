@@ -81,7 +81,7 @@ export default function Measure({info}) {
                 <small className="block my-0 py-0">Aggregate Functions</small>
                 {
                     info && info.measureName.length>0 && info.aggFunctions.map(A=>(
-                        <AggFunction key={A.aggFuncName} measureInfo={{"measureName": info.measureName,"measurePrefixName":measureName, "range":info.range.rangeName}} info={A}/>
+                        <AggFunction key={A.aggFuncName} measureInfo={{"measureName": info.measureName,"measurePrefixName":measureName, "range":info.range.rangeName, additivityInfo:info.additivityInfo}} info={A}/>
                     ))
                     
                 }
