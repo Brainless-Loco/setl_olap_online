@@ -84,7 +84,8 @@ const selectionForQueryState = {
         message: '',
         type: '',
         title: '' // success | warning | error | info | question
-    }
+    },
+    isNewLevelAdded: false
 }
 
 const queryReducer = (state = selectionForQueryState, action) => {
@@ -120,12 +121,12 @@ const queryReducer = (state = selectionForQueryState, action) => {
 
         // Measure Works
         case UPDATE_SELECTED_MEASURE_LIST:
-            const { alertInfo, updatedMeasures } = checkMeasureAdditivity(action.measures)
+            const { alertInfo: measureAlertInfo, updatedMeasures } = checkMeasureAdditivity(action.measures, state.selectedLevels)
             // selectedLevels
             return {
                 ...state,
                 selectedMeasures: updatedMeasures,
-                alertInfo: alertInfo
+                alertInfo: measureAlertInfo
             }
         case REMOVE_MEASURE_FROM_SELECTED_MEASURE_LIST:
             return {
@@ -141,9 +142,14 @@ const queryReducer = (state = selectionForQueryState, action) => {
 
         // Level Works
         case TRY_TO_ADD_LEVEL:
+            // console.log("action.levelInfo", action.levelInfo);
+            // console.log("state.selectedLevels", state.selectedLevels);
+            const  { alertInfo: levelAlertInfo, updatedSelectedData } = tryToAddLevel(action.levelInfo, state.selectedLevels, state.selectedMeasures)
             return {
                 ...state,
-                selectedLevels: tryToAddLevel(action.levelInfo, state.selectedLevels)
+                alertInfo: levelAlertInfo,
+                selectedLevels: updatedSelectedData,
+                newlyAddedLevel: levelAlertInfo.message.length<1 ? action.levelInfo.levelName : ""
             }
         case REMOVE_LEVEL:
             return {

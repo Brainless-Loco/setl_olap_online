@@ -2,13 +2,14 @@ const deepCopy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
 
-export function checkMeasureAdditivity(measures) {
+export function checkMeasureAdditivity(measures, selectedLevelData) {
   const SUM_URI = "http://purl.org/qb4olap/cubes#sum";
   const alertInfo = { message: "", title: "", type: "" };
   const updatedMeasures = [];
 
   for (const measure of measures) {
     const isNonAdditive = measure.additivityInfo?.nonAdditiveDims === true;
+    const semiAdditiveDims = measure.additivityInfo?.semiAdditiveDims || [];
     const aggFunctions = measure.aggFunctions;
     const hasSum = aggFunctions.some(func => func.aggFuncName === SUM_URI);
     const hasOnlySum = aggFunctions.length === 1 && hasSum;
@@ -37,10 +38,26 @@ export function checkMeasureAdditivity(measures) {
       continue;
     }
 
-    // CASE 4: Measure is additive or semi-additive – include as-is
+    // CASE 5: Measure is semi-additive
+    if (semiAdditiveDims.length > 0) {
+      const selectedDims = Object.keys(selectedLevelData);
+
+      const hasInvalidDim = selectedDims.some(dimIRI => !semiAdditiveDims.includes(dimIRI));
+
+      if (hasInvalidDim) {
+        alertInfo.message= `The selected measure - "${measure.measurePrefixName}" is semi-additive and cannot be used with one or more selected dimensions.`;
+        alertInfo.title= "Semi-Additive Constraint Violation";
+        alertInfo.type= "error";
+        continue; // Do not add the measure
+      }
+
+      updatedMeasures.push(measure); // All dimensions are valid
+      continue;
+    }
+    
+    // CASE 4: Measure is additive
     updatedMeasures.push(measure);
   }
-
   return { alertInfo, updatedMeasures };
 }
 
@@ -61,50 +78,70 @@ export const remove_agg_func = (selectedMeasures, measureName, aggFuncName)=>{
     return tempMeasures.filter(measure => measure !== null);
 }
 
-export const tryToAddLevel = (levelInfo, selectedData) => {
+export const tryToAddLevel = (levelInfo, selectedData, selectedMeasures) => {
   const { levelName, prefixName, inDimension, rollupSerial, inHierarchy } = levelInfo;
 
-  // Create a deep copy of the selectedData to avoid mutation
+  const alertInfo = { message: "", title: "", type: "" };
+
+  // STEP 1: Check for incompatible semi-additive measures
+  for (const measure of selectedMeasures) {
+    const additivityInfo = measure.additivityInfo;
+
+    if (
+      additivityInfo &&
+      Array.isArray(additivityInfo.semiAdditiveDims) &&
+      !additivityInfo.semiAdditiveDims.includes(inDimension)
+    ) {
+      alertInfo.message = `Cannot add level "${prefixName}" from dimension "${inDimension}" as the selected measure "${measure.measurePrefixName}" is Semi-additive to other dimensions.`;
+      alertInfo.title = "Semi-Additivity Restriction";
+      alertInfo.type = "error";
+
+      return {
+        alertInfo,
+        updatedSelectedData: selectedData // No changes made
+      };
+    }
+  }
+
+  // STEP 2: Create a deep copy of selectedData to avoid mutation
   const newSelectedData = { ...selectedData };
 
-  // Check if the dimension exists
+  // STEP 3: Initialize or clone the dimension block
   if (!newSelectedData[inDimension]) {
-      newSelectedData[inDimension] = {
-          dimensionName: inDimension,
-          rollupSerial,
-          selectedHierarchy: inHierarchy,
-          selectedLevels: []
-      };
+    newSelectedData[inDimension] = {
+      dimensionName: inDimension,
+      rollupSerial,
+      selectedHierarchy: inHierarchy,
+      selectedLevels: []
+    };
   } else {
-      // Create a new copy of the dimension to avoid mutation
-      newSelectedData[inDimension] = { ...newSelectedData[inDimension] };
-      // Make sure selectedLevels is also a new array
-      newSelectedData[inDimension].selectedLevels = [...newSelectedData[inDimension].selectedLevels];
+    newSelectedData[inDimension] = { ...newSelectedData[inDimension] };
+    newSelectedData[inDimension].selectedLevels = [...newSelectedData[inDimension].selectedLevels];
   }
 
   const selectedLevels = newSelectedData[inDimension].selectedLevels;
 
-  // Check if the level already exists in the selected levels
+  // STEP 4: Avoid duplicate level addition
   const levelExists = selectedLevels.some(l => l.levelName === levelName);
 
   if (!levelExists) {
-      // If not present, add the level with the blank template
-      const newLevel = {
-          levelName,
-          prefixName,
-          attributesToBeViewed: [],
-          selectedInstances: []
-      };
+    const newLevel = {
+      levelName,
+      prefixName,
+      attributesToBeViewed: [],
+      selectedInstances: []
+    };
 
-      // Create a new array to avoid mutation
-      selectedLevels.push(newLevel);
-
-      // Update the dimension with the new selected levels
-      newSelectedData[inDimension].selectedLevels = selectedLevels;
+    selectedLevels.push(newLevel);
+    newSelectedData[inDimension].selectedLevels = selectedLevels;
   }
 
-  return newSelectedData;
+  return {
+    alertInfo,
+    updatedSelectedData: newSelectedData
+  };
 };
+
 
 
 

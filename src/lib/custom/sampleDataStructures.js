@@ -59,35 +59,57 @@ datasetInitialState.treeStructures:{
 }
 */
 
-/*
-datasetInitialState.selectedLevelData = {
-    levelName: "",
-    attributes:[
-        {
-            attributeName:"",
-            prefixIRI:"",
-            attributeValues:[
-                {
-                    type: 'literal', 
-                    value: '1'
-                },
-                {
-                    type: 'uri',
-                    value:'namespace.com/something' 
-                }
-            ]
-        }
-    ]
-}
-*/
-
-
 
 
 
 
 
 // Query Selection
+
+
+/*
+selectionForQueryState.selectedLevelData = {
+
+  <dimensionIRI>: {
+    dimensionName: "dimensionIRI",
+    rollupSerials: [
+        {
+          inDimension: "dimensionIRI",
+          inHierarchy: "hierarchyIRI",
+          name: "rollupSerialName",
+          parentLevel: "parentLevelIRI", // could be null
+          rollupRelation: "rollupRelationIRI" // could be null
+          isCuboid: true | false,
+        }
+      ], // List of rollup serials
+    selectedHierarchy: "hierarchyIRI", // Selected hierarchy
+    selectedLevels: [
+      {
+        levelName: "levelIRI",
+        prefixName: "prefix:level",
+        attributesToBeViewed: [
+          {
+            attributeName: "attributeIRI",
+            prefixName: "prefixIRI"
+          }
+        ],
+        selectedInstances: [
+          {
+            originalIRI: "attributeIRI",
+            prefixIRI: "prefixIRI",
+            instances: [
+              {
+                type: "typeIRI",
+                value: "valueIRI"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+*/
 
 /*
 selectionForQueryState.selectedMeasures: [
@@ -97,42 +119,17 @@ selectionForQueryState.selectedMeasures: [
         range:'namespace.com/range',
         aggFunctions: [
             { aggFuncName: "namespace.com/avg", prefixName: "qb4o:avg" }
-        ]
+        ],
+        
+        additivityInfo: {
+          semiAdditiveDims: [
+            "http://example.org/dimensions#time",
+            "http://example.org/dimensions#region"
+          ],
+          nonAdditiveDims: true | false,
+        }
+      }
     }
 ]
 */
 
-
-/*
-selectionForQueryState.selectedLevels: {
-    "dimensionIRI": {
-      dimensionName: "dimensionIRI",
-      rollupSerials: [], // List of rollup serials
-      selectedHierarchy: "hierarchyIRI", // Selected hierarchy
-      selectedLevels: [
-        {
-          "levelName": "levelIRI",
-          "prefixName": "prefixIRI",
-          "attributesToBeViewed": [
-            {
-              "attributeName": "attributeIRI",
-              "prefixName": "prefixIRI"
-            }
-          ],
-          "selectedInstances": [
-            {
-              "originalIRI": "attributeIRI",
-              "prefixIRI": "prefixIRI",
-              "instances": [
-                {
-                  "type": "typeIRI",
-                  "value": "valueIRI"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  }
-*/

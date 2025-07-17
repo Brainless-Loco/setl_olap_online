@@ -24,6 +24,8 @@ export default function SelectedLevels() {
   const getAllLevels = memoize((state) => {
     const selectedData = state.queryReducer.selectedLevels;
     let allLevels = [];
+
+    // console.log(selectedData)
   
     Object.keys(selectedData).forEach(dimensionIRI => {
       const { selectedLevels } = selectedData[dimensionIRI];

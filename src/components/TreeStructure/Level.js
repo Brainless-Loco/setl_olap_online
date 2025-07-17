@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { splitIRI } from "@/lib/custom/helper"
 
 
-export default function Level({info,rollupSerial}) {
+export default function Level({info, rollupSerial}) {
 
     const dispatch = useDispatch()
 
@@ -16,6 +16,7 @@ export default function Level({info,rollupSerial}) {
     const abox = useSelector((state) => state.datasetReducer.abox);
     const selectedLevelData = useSelector((state)=> state.datasetReducer.selectedLevelData)
     const allLevelData = useSelector((state)=> state.datasetReducer.allLevelData)
+    const newlyAddedLevel = useSelector((state) => state.queryReducer.newlyAddedLevel);
 
     const update_level_name_prefix = ()=>{
         const splittedName = splitIRI(info.name)
@@ -37,27 +38,46 @@ export default function Level({info,rollupSerial}) {
     }
 
     const selectThisLevel =  async ()=>{
-        if(selectedLevelData && selectedLevelData[info.name]){
-            dispatch(update_selected_level_data(allLevelData[info.name]))
+        
+        try{
+            dispatch(try_to_add_level({levelName:info.name, prefixName:levelName,inDimension:info.inDimension,inHierarchy:info.inHierarchy, rollupSerial}))
         }
-        const res = await fetch('/api/get_level_attribute_instance', {
-            method: "POST",
-            body:JSON.stringify({tbox:tbox,abox:abox,level:info.name})}
-        )
-        if(res){
-            const data = await res.json()
-            dispatch(update_selected_level_data(data.levelData))
-            dispatch(add_to_all_level_data(info.name, data.levelData))
+        catch(e){
+
         }
-        else{
-            console.log("couldn't fetch the tree structure...")
-        }
-        dispatch(try_to_add_level({levelName:info.name, prefixName:levelName,inDimension:info.inDimension,inHierarchy:info.inHierarchy, rollupSerial}))
     }
 
     useEffect(() => {
         if(info && info.name.length>0) update_level_name_prefix()
     }, [info])
+
+
+    useEffect(() => {
+        const fetchLevelAttributes = async () => {
+            if (newlyAddedLevel && newlyAddedLevel === info.name) {
+                if (selectedLevelData && selectedLevelData[info.name]) {
+                    dispatch(update_selected_level_data(allLevelData[info.name]));
+                }
+                try {
+                    const res = await fetch('/api/get_level_attribute_instance', {
+                        method: "POST",
+                        body: JSON.stringify({ tbox, abox, level: info.name })
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        dispatch(update_selected_level_data(data.levelData));
+                        dispatch(add_to_all_level_data(info.name, data.levelData));
+                    } else {
+                        console.log("Couldn't fetch level attribute instances...");
+                    }
+                } catch (error) {
+                    console.error("Error fetching level attribute instances:", error);
+                }
+            }
+        };
+
+        fetchLevelAttributes();
+    }, [newlyAddedLevel]);
     
 
     return (

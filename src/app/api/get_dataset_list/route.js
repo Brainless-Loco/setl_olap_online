@@ -9,7 +9,8 @@ export async function POST (request=Request) {
     const {tbox} = await request.json()
 
     const client = new SparqlClient()
-    let sparql = `prefix qb: <http://purl.org/linked-data/cube#>\n
+    let sparql = `
+prefix qb: <http://purl.org/linked-data/cube#>\n
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n
 SELECT distinct ?dataset\n`
     sparql += `\tFROM<${tbox}>\n`
